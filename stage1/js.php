@@ -1,4 +1,6 @@
 <?php
+    define('GZ_PACK', 'src.js');
+
 	$s = microtime(1);
 	header('Content-Type:application/x-javascript');
 	$files = array_merge(
@@ -8,8 +10,18 @@
 		glob('./lib/output/*.js'),
 		glob('./lib/*.js')
 	);
+
+    $src = '';
 	foreach ($files as $js) {
-		echo "// $js \n";
-		echo file_get_contents($js), "\n\n";
+		$src .= "// $js \n";
+		$src .= file_get_contents($js) . "\n\n";
 	}
-	echo '//', microtime(1) - $s;
+	$src .= '//' . (microtime(1) - $s);
+
+    echo $src;
+
+    if (!file_exists(GZ_PACK)) {
+        $zp = gzopen(GZ_PACK, 'w9');
+        gzwrite($zp, $src);
+        gzclose($zp);
+    }

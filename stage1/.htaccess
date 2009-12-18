@@ -1,0 +1,30 @@
+AddEncoding gzip .gz
+AddOutputFilterByType DEFLATE text/html
+AddOutputFilterByType DEFLATE text/xml
+AddOutputFilterByType DEFLATE image/x-icon
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE text/javascript
+AddOutputFilterByType DEFLATE application/x-javascript
+
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch Konqueror no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+RewriteEngine On
+RewriteCond %{HTTP:Accept-Encoding} !gzip [OR]
+RewriteCond %{REQUEST_FILENAME} !-f [OR]
+RewriteCond %{HTTP_USER_AGENT} Konqueror
+RewriteRule ^src\.js$ js.php [QSA,L]
+
+<FilesMatch .*\.(js|css)$>
+    Header set Content-Encoding: gzip
+    Header set Cache-control: private
+</FilesMatch>
+
+Header append Vary User-Agent
+ExpiresActive On
+ExpiresDefault "access plus 10 years"
+<FilesMatch .*\.(shtml|html|phtml|php)$>
+    ExpiresActive Off
+</FilesMatch>
