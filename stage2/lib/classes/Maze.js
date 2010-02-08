@@ -63,5 +63,12 @@ Maze.prototype = {
 		if (this.container.length < this.size.height) {
 			throw 'MazeTooShort';
 		}
+	},
+	createUnit : function (x, y) {
+		if (x === undefined) {
+			x = this.diff.startCoord.x;
+			y = this.diff.startCoord.y;
+		}
+		return new Unit (this, x, y);
 	}
 };
