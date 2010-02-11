@@ -127,25 +127,16 @@ Math.degree = function (degree) {
 
 Math.degreeSingle = function (degree) {
 	degree %= this.degree(360);
-	return (degree < 0) ? Math.degree(360) + degree : degree;
+	return (degree < 0) ? this.degree(360) + degree : degree;
 }
 
 Math.getDegree = function (radian) {
 	return radian / Math.PI * 180;
 }
 
-Number.prototype.between = function (num_1, num_2, strict) {
-	// Если включен Стрикт, то num_1 - стает минимальным, num_2 - максимальным.
-	// Иначе - порядок неважен.
-	var x = this.valueOf();
-
-	if(x>num_1 && x<num_2) {
-		return true;
-	} else if (!strict && x<num_1 && x>num_2) {
-		return true;
-	} else {
-		return false;
-	}
+Number.prototype.between = function (n1, n2, strict) {
+	return (this > n1 && this < n2) ||
+		(!strict && (this == n1 || this == n2));
 }
 
 Number.prototype.round = function (digits) {

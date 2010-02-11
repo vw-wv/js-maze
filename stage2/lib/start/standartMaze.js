@@ -13,10 +13,18 @@ Start.standartMaze = function (str) {
 		var shift = 90 * dirShift('top', unit.dir);
 		var cell  = unit.getCell();
 		var rays  = {};
-		for (var i = -30, c = 0; i <= 30; i+=1, c++) {
-			rays[i] = cell.rcWallRay(unit.dir, (i + shift).degree());
+		var cfg  = {
+			angle   : 90,
+			width   : 768,
+			height  : 480,
+			texture : false,
+			quality : 100
 		}
-		maze.rayCast(rays, c);
+		for (var i = -cfg.angle/2, c = 0; i < cfg.angle/2; i+=(50/cfg.quality), c++) {
+			rays[i] = cell.rcWallRay((i + shift).degree(), unit.dir);
+		}
+		cfg.lines = c;
+		maze.rayCast(rays, cfg);
 	}
 	rayCast();
 
