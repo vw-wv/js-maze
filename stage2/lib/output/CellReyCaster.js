@@ -4,64 +4,127 @@
  *		size
  * }
  */
+
 Cell.prototype.rcFullRay = function (data) {
-	var shift = dirShift("top", data.wall);
-	var checkAngle = Math.degreeSingle(
-		data.angle - (Math.degree(90) * shift)- Math.degree(90)
-	);
+	// Этот код может показаться обфусцированным, я понимаю.
+	// Но на самом деле достаточно посмотреть на рисунок
+	var w, L, x; // aim
+	var next, nb = null;
 
-	var next = null, next1, next2, dir1, dir2, size, lenght;
-	var isRight = (checkAngle == Math.degree(90)); // pict 1.1
-	var y = isRight ? null : data.size * Math.tan(checkAngle);
+	var sh = dirShift('bottom', data.wall);
+	var a  = (data.angle - (90 * sh).degree()).degreeSingle();
+	var b  = (360).degree() - a;
+	var k  = data.size;
+	var j  = 1 - k;
+	var n = a.tan().abs();
+	var corner = false;
 
-	if (isRight || Math.abs(y) > 1) { // pict 1.4
-		dir1 = dirShift(data.wall, 2);
-		lenght = isRight ? 1 : 1/Math.sin(checkAngle);
-		if (!this.walls[dir1]) {
-			next   = this.getNeighbour(dir1);
-			size   = isRight ? data.size : y;
+	
+	if (k < 1) { // + Counting w, L, x
+		if (a.round(8) == 0) { // p1
+			w = 0;
+			L = 1;
+			x = k;
+		} else if (a < (90).degree()) { // p2, p3, p4
+			if (n > k) { // p4
+				w = 1;
+				L = k / a.sin();
+				x = k / a.tan();
+			} else { // p2, p3
+				corner = (n == k);
+				w = 0;
+				L = (1 + n*n).sqrt();
+				x = corner ? 1 : k - n;
+			}
+		} else if (a > (270).degree()) { // p5, p6, p7
+			if (n > j) { // p5
+				w = 3;
+				L =       j / b.sin();
+				x = 1 - ( j / b.tan() );
+			} else {
+				corner = (n == k);
+				w = corner ? 3 : 0;
+				L = (1 + n*n).sqrt();
+				x = corner ? 1 : k + n;
+			}
+		} else {
+			throw 'WrongAngleException : ' + a .getDegree();
 		}
-	} else if (Math.abs(y) < 1) { // pict 1.2
-		dir1 = dirShift(data.wall, y > 0 ? 1 : -1);
-		lenght = Math.sqrt(data.size*data.size + y*y);
-		if (!this.walls[dir1]) {
-			next   = this.getNeighbour(dir1);
-			size   = y;
+	} else if (k == 1) { // p8, p9, p10
+		if (a == (45).degree()) { // p9
+			corner = true;
+			w = 0;
+			L = (2).sqrt();
+			x = 1;
+		} else if (a > (45).degree()) { // p10
+			w = 1;
+			L = 1 / a.sin();
+			x = 1 / a.tan();
+		} else if (a < (45).degree()) { // p8
+			w = 0;
+			L = 1 / a.cos();
+			x = 1 - a.tan();
+		} else {
+			throw 'WrongCornerAngleException : ' + a .getDegree();
 		}
-	} else { //  if (Math.abs(y) == 1) // pict 1.3
-		dir1 = dirShift(data.wall, y > 1 ? 1 : 2);
-		dir2 = dirShift(data.wall, y > 1 ? 2 : 3);
-		lenght = Math.sqrt(1*1 + y*y);
-		if (!this.walls[dir1] && !this.walls[dir2]) {
-			next1 = this.getNeighbour(dir1);
-			next2 = this.getNeighbour(dir2);
-			if (!next1.walls[dir2] && !next2.walls[dir1]) {
-				next = next1.getNeighbour(dir2);
+	} else {
+		throw 'WrongKLengthException : ' + k;
+	} // - Counting w, L, x
+
+	if (corner) {
+		next = [
+			dirShift (data.wall, (2 + w    )),
+			dirShift (data.wall, (2 + w + 1)),
+		];
+		if (!this.walls[next[0]] && !this.walls[next[1]]) {
+			nb = [
+				this.getNeighbour(next[0]),
+				this.getNeighbour(next[1])
+			];
+			if (!nb[0].walls[next[1]] && !nb[1].walls[next[0]]) {
+				nb = nb[0].getNeighbour(next[1]);
 			}
 		}
+	} else {
+		next = dirShift (data.wall, (2 + w));
+		if (!this.walls[next]) {
+			nb = this.getNeighbour(next);
+		}
 	}
-	if (next) {
-		lenght += next.rcFullRay({
-			wall  :dirShift(dir1, 2),
+
+	if (nb) {
+		L += nb.rcFullRay({
+			wall  : dirShift(data.wall, w),
 			angle : data.angle,
-			size  : size
+			size  : x
 		});
 	}
-	return lenght;
+
+	return L;
 }
 
+Cell.prototype.rcWallRay = function (dir, angle) {
+	var sh = dirShift('top', dir);
+	var a = (angle - (90 * sh).degree()).degreeSingle();
+	
+	return this.rcFullRay({
+		wall  : dirShift(dir, 2),
+		angle : angle,
+		size  : 0.5
+	}) * a.cos();
+}
 
 Cell.prototype.rcCenterRay = function (angle) {
-	var next, lenght, dir, size;
-	var a = Math.degreeSingle(Math.degree(angle));
-	if (!(a % Math.degree(45)) && (a % Math.degree(90))) {
+	var next, length, dir, size;
+	var a = angle.degreeSingle();
+	if (!(a % (45).degree()) && (a % (90).degree())) {
 		dir = [
 			['top'   , 'right' ],
 			['right' , 'bottom'],
 			['bottom', 'left'  ],
 			['left'  , 'top'   ]
-		][(a - Math.degree(45)) / Math.degree(90)];
-		lenght = Math.sqrt(2)/2;
+		][(a - (45).degree()) / (90).degree()];
+		length = (2).sqrt()/2;
 		if (!this.walls[dir[0]] && !this.walls[dir[1]]) {
 			var next1 = this.getNeighbour(dir[1]);
 			var next2 = this.getNeighbour(dir[0]);
@@ -72,24 +135,33 @@ Cell.prototype.rcCenterRay = function (angle) {
 			}
 		}
 	} else {
-		dir = ['top', 'right', 'bottom', 'left'][
-			Math.floor((a + Math.degree(45)) / Math.degree(90)) % 4
-		];
-		size = 0.5 * Math.tan(a % Math.degree(45));
-		lenght = Math.sqrt(0.5*0.5 + size*size);
+		var shift = Math.floor((a + (45).degree()) / (90).degree()) % 4;
+		dir = ['top', 'right', 'bottom', 'left'][shift];
+		var curA = a % Math.degree(90);
+		if (curA > (45).degree()) {
+			size = 0.5 * ((90).degree() - curA).tan();
+		} else {
+			size = 0.5 * curA.tan();
+		}
+		length = (0.5*0.5 + size*size).sqrt();
 		if (!this.walls[dir]) {
 			next = this.getNeighbour(dir);
-			if (a % Math.degree(90) < Math.degree(45)) {
+			if (a % (90).degree() < (45).degree()) {
 				size += 0.5;
 			}
 		}
 	}
 	if (next) {
-		lenght += next.rcFullRay({
+		length += next.rcFullRay({
 			wall  : dirShift(dir, 2),
-			angle : Math.degree(angle),
+			angle : angle,
 			size  : size
 		});
 	}
-	return lenght;
+
+
+	var sh = dirShift('top', dir);
+	a = (angle - (90 * sh).degree()).degreeSingle();
+
+	return length * a.cos();
 }

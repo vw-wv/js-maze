@@ -101,6 +101,18 @@ String.prototype.hexToBin = function () {
 	}).join('');
 }
 
+String.prototype.hexToDec = function () {
+	return parseInt(this, 16);
+}
+
+String.prototype.decToHex = function () {
+	return Number(this).decToHex();
+}
+
+Number.prototype.decToHex = function () {
+	return this.toString(16);
+}
+
 Array.prototype.map = function (fn) {
 	for (var i = 0; i < this.length; i++) {
 		this[i] = fn(this[i]);
@@ -115,7 +127,11 @@ Math.degree = function (degree) {
 
 Math.degreeSingle = function (degree) {
 	degree %= this.degree(360);
-	return (degree < 0) ? this.degree(360) + degree : degree;
+	return (degree < 0) ? Math.degree(360) + degree : degree;
+}
+
+Math.getDegree = function (radian) {
+	return radian / Math.PI * 180;
 }
 
 Number.prototype.between = function (num_1, num_2, strict) {
@@ -131,3 +147,23 @@ Number.prototype.between = function (num_1, num_2, strict) {
 		return false;
 	}
 }
+
+Number.prototype.round = function (digits) {
+	return parseFloat(this.toFixed(digits * 1));
+}
+
+// "this.toFixed is not a function" without this string
+Math.abs((0).round());
+
+(function () {
+	var funcs = ['tan', 'sin', 'cos', 'abs', 'degree', 'degreeSingle', 'getDegree', 'sqrt', 'ceil', 'floor'];
+
+	for (var i = funcs.length; i--;) {
+		var f = funcs[i];
+		Number.prototype[f] = (function (f) {
+			return function () {
+				return Math[f](this);
+			}
+		})(f);
+	}
+})();

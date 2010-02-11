@@ -22,7 +22,9 @@ Unit.prototype = {
 				moveTo = cell.getNeighbour(dir);
 			}
 		}
-		this.coord = moveTo.coord;
+		if (moveTo) {
+			this.coord = moveTo.coord;
+		}
 		return this;
 	},
 	toStart : function () {

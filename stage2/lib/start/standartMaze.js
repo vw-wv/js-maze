@@ -5,9 +5,21 @@ Start.standartMaze = function (str) {
 	var maze = (new Maze)
 		.fromString(str)
 		.mapOutput();
+
 	var unit = (new Unit (maze))
 		.toStart()
 		.mapOutput();
+	var rayCast = function () {
+		var shift = 90 * dirShift('top', unit.dir);
+		var cell  = unit.getCell();
+		var rays  = {};
+		for (var i = -45, c = 0; i <= 45; i+=0.5, c++) {
+			rays[i] = cell.rcWallRay(unit.dir, (i + shift).degree());
+		}
+		maze.rayCast(rays, c);
+	}
+	rayCast();
+
 	var arrows = {
 		37 : 'left' ,
 		38 : 'top'  ,
@@ -26,22 +38,19 @@ Start.standartMaze = function (str) {
 			sw.start();
 			var dir = arrows[e[0].keyCode];
 			unit.rotate(dir).mapOutput();
+			rayCast();
 		})
 		.keyboard('[aup|adown]', function (e) {
 			sw.start();
 			unit.move(arrows[e[0].keyCode] == "bottom").mapOutput();
 			checkFinish();
-			var c = unit.getCell();
-			var testData = {};
-			for (var i = 0; i < 360; i++) {
-				testData[i] = c.rcCenterRay(i);
-			}
-			console.log(testData);
+			rayCast();
 		})
 		.keyboard('shift+(arrows)', function (e) {
 			sw.start();
 			unit.move(arrows[e[1].keyCode]).mapOutput();
 			checkFinish();
+			rayCast();
 		})
 		.keyboard('e', function () {
 			moveTo('editor', maze.getCode());
