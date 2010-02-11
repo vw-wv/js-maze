@@ -13,7 +13,7 @@ Start.standartMaze = function (str) {
 		var shift = 90 * dirShift('top', unit.dir);
 		var cell  = unit.getCell();
 		var rays  = {};
-		for (var i = -45, c = 0; i <= 45; i+=0.5, c++) {
+		for (var i = -30, c = 0; i <= 30; i+=1, c++) {
 			rays[i] = cell.rcWallRay(unit.dir, (i + shift).degree());
 		}
 		maze.rayCast(rays, c);
