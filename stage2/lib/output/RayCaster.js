@@ -33,7 +33,9 @@ Maze.prototype.rcRenderRays = function (rays, cfg) {
 				" width:" + rayWidth + "px;'></div>";
 		} else {
 			var color = L < 0.5 ? 200 : 200/(L+0.5);
-			color = last.diff.isStart ? color.toColor('blue') : (last.diff.isFinish ? color.toColor('red') : color.toColor());
+			color = last.diff.isStart  ? (color/2).toColor('green') :
+			        last.diff.isFinish ? color.toColor('red') :
+			                             color.toColor();
 			html += "<div" +
 				" style='float:left;" +
 				" margin:" + rayMarg + "px 0;" +

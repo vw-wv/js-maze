@@ -1,6 +1,6 @@
 html {
-	background : white;
-	color      : black;
+	background : black;
+	color      : white;
 }
 table.map {
 	border-collapse : collapse;
@@ -8,27 +8,27 @@ table.map {
 	padding : 0;
 }
 table.map td {
-	border : 1px solid white;
+	border : 1px solid black;
 	height : 24px;
 	width  : 24px;
 }
 table.map td.t {
-	border-top-color    : black;
+	border-top-color    : white;
 }
 table.map td.r {
-	border-right-color  : black;
+	border-right-color  : white;
 }
 table.map td.b {
-	border-bottom-color : black;
+	border-bottom-color : white;
 }
 table.map td.l {
-	border-left-color   : black;
+	border-left-color   : white;
 }
 table.map td.start {
-	background : #dfd;
+	background : #0f0;
 }
 table.map td.finish {
-	background : #fdd;
+	background : #f00;
 }
 table.map td.active {
 	background : #ccc;

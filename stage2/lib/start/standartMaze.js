@@ -10,10 +10,10 @@ Start.standartMaze = function (str) {
 		.mapOutput();
 	var cfg  = {
 		angle   : 100,
-		width   : 1000,
-		height  : 500,
+		width   : 1600,
+		height  : 700,
 		texture : false,
-		quality : 100,
+		quality : 160,
 		fps     : 50,
 		moveFrames   : 10,
 		rotateFrames : 9
@@ -33,7 +33,11 @@ Start.standartMaze = function (str) {
 		37 : 'left' ,
 		38 : 'top'  ,
 		39 : 'right',
-		40 : 'bottom'
+		40 : 'bottom',
+		87 : 'w',
+		83 : 's',
+		65 : 'a',
+		68 : 'd'
 	};
 	var checkFinish = function () {
 		if (unit.getCell().diff.isFinish) {
@@ -43,15 +47,15 @@ Start.standartMaze = function (str) {
 		}
 	}
 	$
-		.keyboard('[aleft|aright]', function (e) {
+		.keyboard('[aleft|aright|a|d]', function (e) {
 			sw.start();
-			var dir = arrows[e[0].keyCode];
+			var dir = ['left', 'a'].has(arrows[e[0].keyCode]) ? 'left' : 'right';
 			unit.rcRotate(dir, cfg).mapOutput();
 			// rayCast();
 		})
-		.keyboard('[aup|adown]', function (e) {
+		.keyboard('[aup|adown|w|s]', function (e) {
 			sw.start();
-			unit.move(arrows[e[0].keyCode] == "bottom").mapOutput();
+			unit.move(['bottom', 's'].has(arrows[e[0].keyCode])).mapOutput();
 			checkFinish();
 			rayCast();
 		})
