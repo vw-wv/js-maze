@@ -16,6 +16,7 @@ Maze.prototype.rcRenderRays = function (rays, cfg) {
 	var rayWidth = Math.floor(width / rays.length * 75) / 75;
 	var k = 0;
 	for (var i = 0; i < rays.length; i++) {
+		var last = rays[i].last;
 		var L = rays[i].length;
 		var rayHeight = height / L;
 		var rayMarg   = (height - rayHeight) / 2;
@@ -31,7 +32,8 @@ Maze.prototype.rcRenderRays = function (rays, cfg) {
 				" opacity: " + opacity.toFixed(2) +  ";" +
 				" width:" + rayWidth + "px;'></div>";
 		} else {
-			var color = (L < 0.5 ? 200 : 200/(L+0.5)).toColor();
+			var color = L < 0.5 ? 200 : 200/(L+0.5);
+			color = last.diff.isStart ? color.toColor('blue') : (last.diff.isFinish ? color.toColor('red') : color.toColor());
 			html += "<div" +
 				" style='float:left;" +
 				" margin:" + rayMarg + "px 0;" +

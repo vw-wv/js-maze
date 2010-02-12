@@ -116,13 +116,16 @@ Number.prototype.decToHex = function () {
 	return this.round(0).toString(16);
 }
 
-Number.prototype.toColor = function () {
+Number.prototype.toColor = function (color) {
 	var hex = this.decToHex();
 	if (this <= 255) {
 		while (hex.length < 2) {
 			hex = '0' + hex;
 		}
-		return '#' + hex + hex + hex;
+		return color == 'red'   ? '#' + hex + '0000'      :
+		       color == 'green' ? '#' + '00' + hex + '00' :
+		       color == 'blue'  ? '#' + '0000' + hex      :
+			                      '#' + hex + hex + hex;
 	} else {
 		while (hex.length < 6) {
 			hex = '0' + hex;

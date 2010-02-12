@@ -91,16 +91,18 @@ Cell.prototype.rcFullRay = function (data) {
 		) : this.getNeighbour( dirShift (data.wall + 2 + w), true);
 
 	if (nb) {
-		L += nb.rcFullRay({
+		var result = nb.rcFullRay({
 			wall  : data.wall + w,
 			angle : data.angle,
 			size  : x
-		}).length;
+		});
+		L += result.length;
 	}
 
 	return {
 		length : L,
-		angle  : a
+		angle  : a,
+		last   : result ? result.last : this
 	};
 }
 
@@ -112,6 +114,7 @@ Cell.prototype.rcWallRay = function (data) {
 	});
 	
 	return {
+		last   : result.last,
 		length : result.length * result.angle.cos()
 	};
 }
@@ -171,6 +174,7 @@ Cell.prototype.rcRay = function (data) {
 	}
 
 	return {
+		last   : result ? result.last : this,
 		length : L.round(5)
 	};
 }
