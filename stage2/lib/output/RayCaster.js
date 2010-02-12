@@ -74,8 +74,8 @@ Unit.prototype.rcRotate = function (dir, cfg) {
 
 Unit.prototype.rcMove = function (back, cfg) {
 	var unit   = this;
-	var shift  = (dirShift(unit.dir) + (back ? 2 : 0) % 4);
-	var dir    = dirShift(shift);
+	var shift  = (dirShift(unit.dir));
+	var dir    = dirShift(shift + (back ? 2 : 0));
 	var cell   = unit.getCell();
 	var nbCell = cell.getNeighbour(dir, true);
 	var angle  = (90*shift).degree();
