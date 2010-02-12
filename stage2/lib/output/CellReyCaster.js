@@ -14,13 +14,17 @@ Cell.prototype.hasCorner = function (dir1, dir2) {
 	);
 }
 
+Cell.prototype.getCornerNeighbour = function (dir1, dir2) {
+	return this.hasCorner(dir1, dir2) ? null : 
+		this.getNeighbour(dir1).getNeighbour(dir2);
+}
+
 Cell.prototype.rcFullRay = function (data) {
 	// Этот код может показаться обфусцированным, я понимаю.
 	// Но на самом деле достаточно посмотреть на рисунок
-	var w, L, x; // aim
-	var next, nb = null;
+	var w, L, x, nb = null; // aim
 
-	var sh = dirShift('bottom', data.wall);
+	var sh = (data.wall + 2) % 4;
 	var a  = (data.angle - (90 * sh).degree()).degreeSingle();
 	var b  = (360).degree() - a;
 	var k  = data.size;
@@ -77,29 +81,18 @@ Cell.prototype.rcFullRay = function (data) {
 			throw 'WrongCornerAngleException : ' + a .getDegree();
 		}
 	} else {
-		throw 'WrongKLengthException : ' + k;
+		throw 'Wrong_K_LengthException : ' + k;
 	} // - Counting w, L, x
 
-	if (corner) {
-		next = [
-			dirShift (data.wall, (2 + w    )),
-			dirShift (data.wall, (2 + w + 1))
-		];
-		if (!this.hasCorner(next[0], next[1])) {
-			nb = this
-				.getNeighbour(next[0])
-				.getNeighbour(next[1]);
-		}
-	} else {
-		next = dirShift (data.wall, (2 + w));
-		if (!this.walls[next]) {
-			nb = this.getNeighbour(next);
-		}
-	}
+	nb = corner ?
+		this.getCornerNeighbour(
+			dirShift (data.wall + 2 + w),
+			dirShift (data.wall + 3 + w)
+		) : this.getNeighbour( dirShift (data.wall + 2 + w), true);
 
 	if (nb) {
 		L += nb.rcFullRay({
-			wall  : dirShift(data.wall, w),
+			wall  : data.wall + w,
 			angle : data.angle,
 			size  : x
 		}).length;
@@ -111,17 +104,173 @@ Cell.prototype.rcFullRay = function (data) {
 	};
 }
 
-Cell.prototype.rcWallRay = function (angle, dir) {
+Cell.prototype.rcWallRay = function (data) {
 	var result = this.rcFullRay({
-		wall  : dirShift(dir, 2),
-		angle : angle,
-		size  : 0.5
+		wall  : data.dir+2,
+		angle : data.angle,
+		size  : data.size
 	});
 	
-	return result.length * result.angle.cos();
+	return {
+		length : result.length * result.angle.cos()
+	};
 }
 
-Cell.prototype.rcCenterRay = function (angle) {
-	// todo this
-	return L;
+Cell.prototype.rcRay = function (data) {
+	// TODO : from walls
+	var x, L, cell;
+	var j, k, m, index, w, a, result;
+	var angle = data.angle.degreeSingle().getDegree().round(8);
+
+	var tmp =
+		(angle.between(  0,  90, 'L')) ? [  data.x,   data.y, 0] :
+		(angle.between( 90, 180, 'L')) ? [  data.y, 1-data.x, 1] :
+		(angle.between(180, 270, 'L')) ? [1-data.x, 1-data.y, 2] :
+		(angle.between(270, 360, 'L')) ? [1-data.y,   data.x, 3] : null;
+	
+	if (tmp) {
+		j     = tmp[0];
+		k     = tmp[1];
+		index = tmp[2];
+	} else {
+		throw 'WrongRayAngleException : ' + angle;
+	}
+	
+	a = (angle % 90).degree();
+	
+	x = 1 - j - k * a.tan();
+
+	if (a == 0) {
+		w = 0;
+		L = k;
+		x = 1 - j;
+	} else {
+		if (x < 0) {
+		w = 1;
+		L = (1-j) / a.sin();
+		x = (1-k) + (1-j) / a.tan();
+		} else {
+			w = 0;
+			L = k / a.cos();
+		}
+	}
+
+	cell = this.getNeighbour(dirShift(w + index), true);
+	if (cell) {
+		result = cell.rcFullRay({
+			wall  : w + index + 2,
+			angle : data.angle,
+			size  : x
+		});
+		L += result.length;
+	}
+
+	if (!isNaN(data.removeFish)) {
+		var diff = (data.angle - data.removeFish).abs();
+		L *= diff.cos();
+	}
+
+	return {
+		length : L.round(5)
+	};
+}
+
+
+
+
+
+
+
+
+
+Cell.prototype.rcRay1 = function (data) {
+	var x, L, cell;
+	var j, k, m, index, w, a, result;
+	var angle = data.angle.degreeSingle().getDegree();
+
+	       if (angle.between(  0,  90, 'L')) {
+		j = data.x;
+		k = data.y;
+		index = 0;
+	} else if (angle.between( 90, 180, 'L')) {
+		j = data.y;
+		k = 1 - data.x;
+		index = 1;
+	} else if (angle.between(180, 270, 'L')) {
+		j = 1 - data.x;
+		k = 1 - data.y;
+		index = 2;
+	} else if (angle.between(270, 360, 'L')) {
+		j = 1 - data.y;
+		k = data.x;
+		index = 3;
+	} else {
+		throw 'WrongRayAngleException';
+	}
+	
+	if ([0, 1].has(k, j)) {
+		if ([0, 1].has(k) && [0, 1].has(j)) {
+			throw 'DotInCornerException';
+		} else if (k == 0 || j == 1) {
+			L = 0;
+			w = (j == 1) ? 1 : 0;
+			x = (j == 1) ? 1 - k : 1 - j;
+			cell = this.getNeighbour(
+				(j == 1) ? 'right' : 'top', true
+			);
+		} else {
+			var dir  = (j == 0) ? 'right' : 'top';
+			var size = (j == 0) ? k : j;
+			return (this.rcWallRay({
+				dir   : dir,
+				angle : data.angle,
+				size  : size
+			}));
+		}
+	} else {
+		a  = data.angle.degreeSingle() % (90).degree();
+
+		if (a == 0) {
+			w = index + 2;
+			L = k;
+			x = 1 - j;
+			cell = this.getNeighbour(dirShift(index), true);
+
+		} else {
+			m = j + k * a.tan();
+			if (m > 1) {
+				w = 1;
+				L = (1 - j) / a.sin();
+				x = (1 - k) + (1 - j)/a.tan();
+				cell = this.getNeighbour(dirShift(index + 1), true);
+			} else {
+				L = k / a.cos();
+				if (m == 1) {
+					w = 2;
+					x = 1;
+					cell = this.getCornerNeighbour(dirShift(index), dirShift(index + 1));
+				} else {
+					w = 0;
+					x = 1 - j - a.tan();
+					cell = this.getNeighbour(dirShift(index), true);
+				}
+			}
+		}
+		result = {
+			angle : a
+		};
+		
+		if (cell) {
+			result = cell.rcFullRay({
+				wall  : dirShift(index + w + 2),
+				angle : data.angle,
+				size  : x
+			});
+			L += result.length;
+		}
+		L *= result.angle.cos();
+	}
+	return {
+		length : L
+	};
 }

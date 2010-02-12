@@ -29,9 +29,12 @@ Cell.prototype = {
 			return isExtreme;
 		}
 	},
-	getNeighbour : function (dir) {
+	getNeighbour : function (dir, checkWall) {
 		if (this.isExtreme(dir)) {
 			return null
+		}
+		if (checkWall && this.walls[dir]) {
+			return null;
 		}
 		var x = this.coord.x, y = this.coord.y;
 		dir == 'top'    ? y-- :

@@ -5,27 +5,28 @@ Start.standartMaze = function (str) {
 	var maze = (new Maze)
 		.fromString(str)
 		.mapOutput();
-
 	var unit = (new Unit (maze))
 		.toStart()
 		.mapOutput();
-	var rayCast = function () {
-		var shift = 90 * dirShift('top', unit.dir);
-		var cell  = unit.getCell();
-		var rays  = {};
-		var cfg  = {
-			angle   : 90,
-			width   : 768,
-			height  : 480,
-			texture : false,
-			quality : 100
-		}
-		for (var i = -cfg.angle/2, c = 0; i < cfg.angle/2; i+=(50/cfg.quality), c++) {
-			rays[i] = cell.rcWallRay((i + shift).degree(), unit.dir);
-		}
-		cfg.lines = c;
-		maze.rayCast(rays, cfg);
+	var cfg  = {
+		angle   : 100,
+		width   : 1000,
+		height  : 500,
+		texture : false,
+		quality : 100,
+		fps     : 50,
+		moveFrames   : 10,
+		rotateFrames : 9
 	}
+	var rayCast = function () {
+		maze.rcRenderRays(
+			unit.rcGetRays({
+				angle : (90 * dirShift(unit.dir)).degree(),
+				x : 0.5,
+				y : 0.5
+			}, cfg)
+		, cfg);
+	};
 	rayCast();
 
 	var arrows = {
@@ -45,18 +46,12 @@ Start.standartMaze = function (str) {
 		.keyboard('[aleft|aright]', function (e) {
 			sw.start();
 			var dir = arrows[e[0].keyCode];
-			unit.rotate(dir).mapOutput();
-			rayCast();
+			unit.rcRotate(dir, cfg).mapOutput();
+			// rayCast();
 		})
 		.keyboard('[aup|adown]', function (e) {
 			sw.start();
 			unit.move(arrows[e[0].keyCode] == "bottom").mapOutput();
-			checkFinish();
-			rayCast();
-		})
-		.keyboard('shift+(arrows)', function (e) {
-			sw.start();
-			unit.move(arrows[e[1].keyCode]).mapOutput();
 			checkFinish();
 			rayCast();
 		})

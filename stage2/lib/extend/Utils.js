@@ -1,10 +1,13 @@
 var dirShift = function (dir, shift) {
+	var func = arguments.callee;
+	if (shift == undefined) {
+		return func ('top', dir);
+	}
 	if (isNaN(shift)) {
 		if (dir == shift) {
 			return 0;
 		}
 		var s = 0;
-		var func = arguments.callee;
 		while (true) {
 			if (func(dir, ++s) == shift) {
 				return s;
@@ -110,7 +113,22 @@ String.prototype.decToHex = function () {
 }
 
 Number.prototype.decToHex = function () {
-	return this.toString(16);
+	return this.round(0).toString(16);
+}
+
+Number.prototype.toColor = function () {
+	var hex = this.decToHex();
+	if (this <= 255) {
+		while (hex.length < 2) {
+			hex = '0' + hex;
+		}
+		return '#' + hex + hex + hex;
+	} else {
+		while (hex.length < 6) {
+			hex = '0' + hex;
+		}
+		return '#' + hex;
+	}
 }
 
 Array.prototype.map = function (fn) {
@@ -118,6 +136,25 @@ Array.prototype.map = function (fn) {
 		this[i] = fn(this[i]);
 	}
 	return this;
+}
+
+Array.prototype.has = function () {
+	var a = arguments;
+	for (var i = 0; i < a.length; i++) {
+		if (this.search(a[i]) !== false) {
+			return true;
+		}
+	}
+	return false;
+}
+
+Array.prototype.search = function (elem) {
+	for (var i = 0; i < this.length; i++) {
+		if (elem === this[i]) {
+			return i;
+		}
+	}
+	return false;
 }
 
 Math.degree = function (degree) {
@@ -134,9 +171,11 @@ Math.getDegree = function (radian) {
 	return radian / Math.PI * 180;
 }
 
-Number.prototype.between = function (n1, n2, strict) {
-	return (this > n1 && this < n2) ||
-		(!strict && (this == n1 || this == n2));
+Number.prototype.between = function (n1, n2, equals) {
+	return (equals == 'L' && this == n1) ||
+	       (equals == 'R' && this == n2) ||
+	       (this > n1 && this < n2) ||
+	       (equals === true && (this == n1 || this == n2));
 }
 
 Number.prototype.round = function (digits) {
@@ -147,7 +186,7 @@ Number.prototype.round = function (digits) {
 Math.abs((0).round());
 
 (function () {
-	var funcs = ['tan', 'sin', 'cos', 'abs', 'degree', 'degreeSingle', 'getDegree', 'sqrt', 'ceil', 'floor'];
+	var funcs = ['tan', 'sin', 'cos', 'abs', 'degree', 'degreeSingle', 'getDegree', 'sqrt', 'ceil', 'floor', 'log'];
 
 	for (var i = funcs.length; i--;) {
 		var f = funcs[i];

@@ -1,7 +1,7 @@
-Maze.prototype.rayCast = function (rays, cfg) {
+Maze.prototype.rcRenderRays = function (rays, cfg) {
 	var width  = cfg.width;
 	var height = cfg.height;
-
+	
 	if (!$('body > .rayCast')[0]) {
 		$('<div class="rayCast">').prependTo('body').css({
 			'background-color' : 'black',
@@ -13,25 +13,25 @@ Maze.prototype.rayCast = function (rays, cfg) {
 	}
 	var div = $('body > .rayCast');
 	var html = '';
-	var rayWidth = Math.floor(width / cfg.lines * 75) / 75;
+	var rayWidth = Math.floor(width / rays.length * 75) / 75;
 	var k = 0;
-	for (var i in rays) {
-		var rayHeight = height * 0.8 / rays[i];
+	for (var i = 0; i < rays.length; i++) {
+		var L = rays[i].length;
+		var rayHeight = height / L;
 		var rayMarg   = (height - rayHeight) / 2;
 
 		if (cfg.texture) {
-			var opacity   = rays[i] > 10 ? 0 : (10 - rays[i]) / 10;
+			var opacity   = (L > 4 ? 1 : (5 - L))/5;
 			var bgPos     = -rayWidth * k++;
 			html += "<div" +
 				" style='float:left;" +
 				" margin:" + rayMarg + "px 0;" +
 				" height: " + rayHeight + "px;" +
 				" background: url(t.jpg) " + bgPos + "px 50% repeat;" +
-				" opacity: " + opacity +  ";" +
+				" opacity: " + opacity.toFixed(2) +  ";" +
 				" width:" + rayWidth + "px;'></div>";
 		} else {
-			var color = Math.round(255 - (rays[i] > 10 ? 250 : rays[i] * 250 / 10)).decToHex();
-			color = "#" + color + color + color;
+			var color = (L < 0.5 ? 200 : 200/(L+0.5)).toColor();
 			html += "<div" +
 				" style='float:left;" +
 				" margin:" + rayMarg + "px 0;" +
@@ -41,4 +41,43 @@ Maze.prototype.rayCast = function (rays, cfg) {
 		}
 	}
 	div.html(html);
+}
+
+Unit.prototype.rcRotate = function (dir, cfg) {
+	var unit  = this;
+	var angle = dirShift(unit.dir) * (90).degree();
+	var step  = (dir == 'right' ? 1 : -1) * (90).degree() / cfg.rotateFrames;
+	var frame = 1;
+
+	if (unit.rcRotateInterval) {
+		clearInterval(unit.rcRotateInterval);
+	}
+	var light = $.extend(cfg);
+	light.quality/=2;
+	unit.rcRotateInterval = setInterval(function () {
+		unit.maze.rcRenderRays(unit.rcGetRays({
+			angle : angle+(step*frame),
+			x     : 0.5,
+			y     : 0.5
+		}, frame == cfg.rotateFrames ? cfg : light), cfg)
+		if (++frame > cfg.rotateFrames) {
+			clearInterval(unit.rcRotateInterval);
+		}
+	}, 1000/cfg.fps);
+	unit.rotate(dir);
+	return this;
+}
+
+Unit.prototype.rcGetRays = function (data, cfg) {
+		var rays  = [];
+
+		for (var i = -cfg.angle/2; i < cfg.angle/2; i+=(50/cfg.quality)) {
+			rays.push(this.getCell().rcRay({
+				removeFish : data.angle,
+				angle : (i).degree() + data.angle,
+				x     : data.x,
+				y     : data.y
+			}));
+		}
+		return rays;
 }

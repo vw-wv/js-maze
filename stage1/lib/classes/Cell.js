@@ -29,7 +29,7 @@ Cell.prototype = {
 			return isExtreme;
 		}
 	},
-	getNeighbour : function (dir) {
+	getNeighbour : function (dir, checkWall) {
 		if (this.isExtreme(dir)) {
 			return null
 		}

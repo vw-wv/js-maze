@@ -18,9 +18,7 @@ Unit.prototype = {
 			} else {
 				dir = dir ? dirShift(this.dir, 2) : this.dir;
 			}
-			if (!cell.walls[dir]) {
-				moveTo = cell.getNeighbour(dir);
-			}
+			moveTo = cell.getNeighbour(dir, true);
 		}
 		if (moveTo) {
 			this.coord = moveTo.coord;
