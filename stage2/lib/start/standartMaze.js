@@ -14,9 +14,9 @@ Start.standartMaze = function (str) {
 		height  : 700,
 		texture : false,
 		quality : 160,
-		fps     : 50,
+		fps     : 40,
 		moveFrames   : 10,
-		rotateFrames : 9
+		rotateFrames : 10
 	}
 	var rayCast = function () {
 		maze.rcRenderRays(
@@ -55,7 +55,8 @@ Start.standartMaze = function (str) {
 		})
 		.keyboard('[aup|adown|w|s]', function (e) {
 			sw.start();
-			unit.move(['bottom', 's'].has(arrows[e[0].keyCode])).mapOutput();
+			// unit.move(['bottom', 's'].has(arrows[e[0].keyCode])).mapOutput();
+			unit.rcMove(['bottom', 's'].has(arrows[e[0].keyCode]), cfg).mapOutput();
 			checkFinish();
 			rayCast();
 		})

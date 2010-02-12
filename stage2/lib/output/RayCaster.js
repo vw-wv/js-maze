@@ -72,6 +72,54 @@ Unit.prototype.rcRotate = function (dir, cfg) {
 	return this;
 }
 
+Unit.prototype.rcMove = function (back, cfg) {
+	var unit   = this;
+	var shift  = (dirShift(unit.dir) + (back ? 2 : 0) % 4);
+	var dir    = dirShift(shift);
+	var cell   = unit.getCell();
+	var nbCell = cell.getNeighbour(dir, true);
+	var angle  = (90*shift).degree();
+	var frame  = 1;
+	var step  = (back ? -1 : 1) / cfg.moveFrames;
+	if (nbCell) {
+		if (unit.rcMoveInterval) {
+			clearInterval(unit.rcMoveInterval);
+		}
+		var light = $.extend(cfg);
+		light.quality/=2;
+		unit.rcMoveInterval = setInterval(function () {
+			var c = (frame * step);
+			var d = {x : 0.5, y : 0.5}
+			switch(shift) {
+				case 0 : d.y -= c; break;
+				case 1 : d.x += c; break;
+				case 2 : d.y += c; break;
+				case 3 : d.x -= c; break;
+			}
+			for (var m in d) {
+				if (d[m] > 1) {
+					d[m] -= 1;
+				} else if (d[m] < 0) {
+					d[m] += 1;
+				}
+			}
+			
+			unit.maze.rcRenderRays(unit.rcGetRays({
+				angle : angle,
+				x     : d.x,
+				y     : d.y
+			}, frame == cfg.moveFrames ? cfg : light), cfg)
+			if (frame >= cfg.moveFrames / 2) {
+				unit.move(nbCell);
+			}
+			if (++frame > cfg.moveFrames) {
+				clearInterval(unit.rcMoveInterval);
+			}
+		}, 1000/cfg.fps);
+	}
+	return this;
+}
+
 Unit.prototype.rcGetRays = function (data, cfg) {
 		var rays  = [];
 
