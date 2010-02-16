@@ -32,11 +32,19 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 		
 		// ifChanged(strips[i], 'height', stripHeight.round() + 'px');
 
+		var texture = rays[i].last.diff.isStart  ? 'startWall' :
+		              rays[i].last.diff.isFinish ? 'finishWall' :
+		                              'mainWall';
 		var img = strips[i].img;
 		ifChanged(img,    'top', stripTop.round() + 'px');
 		ifChanged(img, 'height', stripHeight.round() + 'px');
 		ifChanged(img,  'width', (stripHeight * stripWidth).round() + 'px');
 		ifChanged(img,   'left', texX.round() + 'px');
+
+		var imageSrc = this.rcGetTextureSrc(texture);
+		if (img.src != imageSrc) {
+			img.src  = imageSrc;
+		}
 		
 		if (!$.browser.msie) {
 			var opacity = L < 0.5 ? 200 : 200/(L+0.5);
@@ -46,6 +54,22 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 		}
 	}
 	return this;
+}
+
+Unit.prototype.rcGetTextureSrc = function (name) {
+	if (!this.rcTexture) {
+		this.rcTexture = {};
+		var data = {
+			'mainWall'   : 'img/wall.png',
+			'startWall'  : 'img/wall-green.png',
+			'finishWall' : 'img/wall-red.png'
+		};
+		for (var i in data) {
+			this.rcTexture[i] = new Image;
+			this.rcTexture[i].src = data[i];
+		}
+	}
+	return this.rcTexture[name].src;
 }
 
 Unit.prototype.rcGetScreen = function () {
@@ -82,10 +106,10 @@ Unit.prototype.rcGetImageStrips = function (rays) {
 			strip.style.width    = stripWidth.ceil()+"px";
 			strip.style.height   = cfg.height.round()+"px";
 			strip.style.overflow = "hidden";
-			strip.style.background = "black";
+			//strip.style.background = "black";
 
 			var img = new Image();
-			img.src = "walls.png";
+			img.src = this.rcGetTextureSrc('mainWall');
 			img.style.position = "absolute";
 			img.style.left     = "0px";
 
