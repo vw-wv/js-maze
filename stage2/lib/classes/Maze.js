@@ -18,10 +18,10 @@ Maze = function () {
 	};
 	this.cfg = {
 		angle   : 100,
-		width   : 1200,
-		height  : 400,
+		width   : 600,
+		height  : 200,
 		texture : false,
-		quality : 200,
+		quality : 100,
 		fps     : 40,
 		moveFrames   : 6,
 		rotateFrames : 6

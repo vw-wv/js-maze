@@ -19,10 +19,10 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 		if (texX.abs() > stripHeight * stripWidth) {
 			texX += stripHeight * stripWidth;
 		}
+		if (texX > 0) {
+			texX -= (stripHeight-1) * stripWidth;
+		}
 
-		var opacity = L < 0.5 ? 200 : 200/(L+0.5);
-		opacity += dirShift(this.dir, rays[i].wall) % 2 ? 0 : 30;
-		opacity /= 200;
 		strips[i].css({
 			'top'    : stripTop,
 			'height' : stripHeight,
@@ -30,11 +30,17 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 		});
 
 		strips[i].img.css({
-			'height' : stripHeight * 3,
+			'height' : stripHeight,
 			'width'  : stripHeight * stripWidth,
-			'left'   : texX,
-			'opacity' : opacity
+			'left'   : texX
 		});
+		if (!$.browser.msie) {
+			var opacity = L < 0.5 ? 200 : 200/(L+0.5);
+			opacity += dirShift(this.dir, rays[i].wall) % 2 ? 0 : 30;
+			opacity /= 200;
+			strips[i].img.css('opacity', opacity);
+		}
+
 	}
 	return this;
 }
@@ -76,7 +82,7 @@ Unit.prototype.rcGetImageStrips = function (rays) {
 			})
 
 			var img = new Image();
-			img.src = 'walls.jpg';
+			img.src = 'walls.png';
 			strip.img = $(img).css({
 				position : 'absolute',
 				left     : 0
