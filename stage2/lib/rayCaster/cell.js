@@ -113,8 +113,7 @@ Cell.prototype.rcRay = function (data) {
 	// TODO : from walls
 	var x, L, cell;
 	var j, k, index, w, a, result;
-	var angle = data.angle.round(8).degreeSingle().getDegree();
-
+	var angle = data.angle.degreeSingle().getDegree().round(8);
 	var tmp =
 		(angle.between(  0,  90, 'L')) ? [  data.x,   data.y, 0] :
 		(angle.between( 90, 180, 'L')) ? [  data.y, 1-data.x, 1] :
@@ -139,9 +138,9 @@ Cell.prototype.rcRay = function (data) {
 		x = 1 - j;
 	} else {
 		if (x < 0) {
-		w = 1;
-		L = (1-j) / a.sin();
-		x = (1-k) + (1-j) / a.tan();
+			w = 1;
+			L = (1-j) / a.sin();
+			x = (1-j) / a.tan() + (1 - k);
 		} else {
 			w = 0;
 			L = k / a.cos();
@@ -179,6 +178,7 @@ Cell.prototype.rcGetRays = function (data, light) {
 		cfg = $.extend(cfg);
 		// cfg.quality/=2;
 	}
+	
 	for (var i = -cfg.angle/2; i < cfg.angle/2; i+=(50/cfg.quality)) {
 		rays.push(this.rcRay({
 			removeFish : data.angle,

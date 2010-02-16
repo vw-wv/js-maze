@@ -1,5 +1,5 @@
 Maze.prototype.mapOutput = function () {
-	$('body').html(this.mapRender());
+	$('body').append(this.mapRender());
 	return this;
 }
 

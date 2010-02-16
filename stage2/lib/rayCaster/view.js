@@ -1,3 +1,5 @@
+
+
 Unit.prototype.rcRenderRays = function (rays) {
 	this.rcRenderRaysTexture(rays);
 	return this;
@@ -8,7 +10,12 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 	var width  = cfg.width;
 	var height = cfg.height;
 	var strips = this.rcGetImageStrips(rays);
-	var stripWidth = Math.floor(width / rays.length * 75) / 75;
+	var stripWidth = getStripWidth(this.maze, rays);
+	var ifChanged = function (elem, name, value) {
+		if (elem.style[name] != value) {
+			elem.style[name] = value;
+		}
+	}
 	for (var i = 0; i < rays.length; i++) {
 		var x = rays[i].dist;
 		var L = rays[i].length;
@@ -22,25 +29,21 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 		if (texX > 0) {
 			texX -= (stripHeight-1) * stripWidth;
 		}
+		
+		// ifChanged(strips[i], 'height', stripHeight.round() + 'px');
 
-		strips[i].css({
-			'top'    : stripTop,
-			'height' : stripHeight,
-			'background' : 'black'
-		});
-
-		strips[i].img.css({
-			'height' : stripHeight,
-			'width'  : stripHeight * stripWidth,
-			'left'   : texX
-		});
+		var img = strips[i].img;
+		ifChanged(img,    'top', stripTop.round() + 'px');
+		ifChanged(img, 'height', stripHeight.round() + 'px');
+		ifChanged(img,  'width', (stripHeight * stripWidth).round() + 'px');
+		ifChanged(img,   'left', texX.round() + 'px');
+		
 		if (!$.browser.msie) {
 			var opacity = L < 0.5 ? 200 : 200/(L+0.5);
 			opacity += dirShift(this.dir, rays[i].wall) % 2 ? 0 : 30;
 			opacity /= 200;
-			strips[i].img.css('opacity', opacity);
+			ifChanged(img, 'opacity', opacity.round(2));
 		}
-
 	}
 	return this;
 }
@@ -51,7 +54,7 @@ Unit.prototype.rcGetScreen = function () {
 		this.rcScreen = $('<div class="rayCast">')
 			.prependTo('body')
 			.css({
-				'background-color' : 'black',
+				'background' : 'black',
 				'height'   : cfg.height,
 				'width'    : cfg.width,
 				'margin'   : 2,
@@ -68,29 +71,29 @@ Unit.prototype.rcGetImageStrips = function (rays) {
 
 		var cfg    = this.maze.cfg;
 		var width  = cfg.width;
-		var stripWidth = Math.floor(width / rays.length * 75) / 75;
+		var stripWidth = getStripWidth(this.maze, rays);
 
 		var screen = this.rcGetScreen();
 
-		for (var i=0; i<width; i+=stripWidth) {
-			var strip = $('<div>').css({
-				'position' : 'absolute',
-				'left'     : i,
-				'width'    : stripWidth,
-				'height'   : 20,
-				'overflow' : 'hidden'
-			})
+		for (var i=0; i < width; i+=stripWidth) {
+			var strip = document.createElement("div");
+			strip.style.position = "absolute";
+			strip.style.left     = i.round() + "px";
+			strip.style.width    = stripWidth.ceil()+"px";
+			strip.style.height   = cfg.height.round()+"px";
+			strip.style.overflow = "hidden";
+			strip.style.background = "black";
 
 			var img = new Image();
-			img.src = 'walls.png';
-			strip.img = $(img).css({
-				position : 'absolute',
-				left     : 0
-			}).appendTo(strip);
+			img.src = "walls.png";
+			img.style.position = "absolute";
+			img.style.left     = "0px";
 
+			strip.appendChild(img);
+			strip.img = img;
+			
 			this.rcImageStrips.push(strip);
-
-			strip.appendTo(this.rcGetScreen());
+			screen.append(strip);
 		}
 	}
 	return this.rcImageStrips;
