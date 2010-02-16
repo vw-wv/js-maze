@@ -23,6 +23,16 @@ Maze = function () {
 		texture : false,
 		quality : 200,
 		fps     : 40,
+		moveFrames   : 6,
+		rotateFrames : 6
+	};
+	this.cfgH = {
+		angle   : 100,
+		width   : 1200,
+		height  : 400,
+		texture : false,
+		quality : 100,
+		fps     : 40,
 		moveFrames   : 10,
 		rotateFrames : 10
 	};

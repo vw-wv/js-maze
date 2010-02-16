@@ -20,5 +20,4 @@ $(function () {
 			mazes[$_GET['lab'] * 1] || mazes[0]
 		);
 	}
-	
 });

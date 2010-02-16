@@ -90,21 +90,23 @@ Cell.prototype.rcFullRay = function (data) {
 			dirShift (data.wall + 3 + w)
 		) : this.getNeighbour( dirShift (data.wall + 2 + w), true);
 
+	var result = {}
 	if (nb) {
-		var result = nb.rcFullRay({
+		result = nb.rcFullRay({
 			wall  : data.wall + w,
 			angle : data.angle,
 			size  : x
 		});
 		L += result.length;
 	}
-
-	return {
-		length : L,
-		wall   : result ? result.wall   : dirShift (data.wall + 2 + w),
-		corner : result ? result.corner : corner,
-		last   : result ? result.last   : this
-	};
+	return $.extend({}, {
+		wall   : dirShift (data.wall + 2 + w),
+		corner : corner,
+		dist   : x,
+		last   : this
+	}, result, {
+		length : L
+	});
 }
 
 Cell.prototype.rcRay = function (data) {
@@ -161,19 +163,21 @@ Cell.prototype.rcRay = function (data) {
 		L *= diff.cos();
 	}
 
-	return {
-		length : L.round(5),
-		wall   : result ? result.wall   : dirShift (w + index),
-		corner : result ? result.corner : false,
-		last   : result ? result.last : this
-	};
+	return $.extend({}, {
+		wall   : dirShift (w + index),
+		corner : false,
+		dist   : x,
+		last   : this
+	}, result, {
+		length : L
+	});
 }
 
 Cell.prototype.rcGetRays = function (data, light) {
 	var cfg = this.maze.cfg, rays = [];
 	if (light) {
 		cfg = $.extend(cfg);
-		cfg.quality/=2;
+		// cfg.quality/=2;
 	}
 	for (var i = -cfg.angle/2; i < cfg.angle/2; i+=(50/cfg.quality)) {
 		rays.push(this.rcRay({
