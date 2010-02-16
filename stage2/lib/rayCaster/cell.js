@@ -25,7 +25,7 @@ Cell.prototype.rcFullRay = function (data) {
 	var w, L, x, nb = null; // aim
 
 	var sh = (data.wall + 2) % 4;
-	var a  = (data.angle - (90 * sh).degree()).degreeSingle();
+	var a  = (data.angle - (90 * sh).degree()).round(8).degreeSingle();
 	var b  = (360).degree() - a;
 	var k  = data.size;
 	var j  = 1 - k;
@@ -34,7 +34,7 @@ Cell.prototype.rcFullRay = function (data) {
 
 	
 	if (k < 1) { // + Counting w, L, x
-		if (a.round(8) == 0) { // p1
+		if (0 == a.round(8)) { // p1
 			w = 0;
 			L = 1;
 			x = k;
@@ -101,29 +101,17 @@ Cell.prototype.rcFullRay = function (data) {
 
 	return {
 		length : L,
-		angle  : a,
-		last   : result ? result.last : this
-	};
-}
-
-Cell.prototype.rcWallRay = function (data) {
-	var result = this.rcFullRay({
-		wall  : data.dir+2,
-		angle : data.angle,
-		size  : data.size
-	});
-	
-	return {
-		last   : result.last,
-		length : result.length * result.angle.cos()
+		wall   : result ? result.wall   : dirShift (data.wall + 2 + w),
+		corner : result ? result.corner : corner,
+		last   : result ? result.last   : this
 	};
 }
 
 Cell.prototype.rcRay = function (data) {
 	// TODO : from walls
 	var x, L, cell;
-	var j, k, m, index, w, a, result;
-	var angle = data.angle.degreeSingle().getDegree().round(8);
+	var j, k, index, w, a, result;
+	var angle = data.angle.round(8).degreeSingle().getDegree();
 
 	var tmp =
 		(angle.between(  0,  90, 'L')) ? [  data.x,   data.y, 0] :
@@ -174,107 +162,26 @@ Cell.prototype.rcRay = function (data) {
 	}
 
 	return {
-		last   : result ? result.last : this,
-		length : L.round(5)
+		length : L.round(5),
+		wall   : result ? result.wall   : dirShift (w + index),
+		corner : result ? result.corner : false,
+		last   : result ? result.last : this
 	};
 }
 
-
-
-
-
-
-
-
-
-Cell.prototype.rcRay1 = function (data) {
-	var x, L, cell;
-	var j, k, m, index, w, a, result;
-	var angle = data.angle.degreeSingle().getDegree();
-
-	       if (angle.between(  0,  90, 'L')) {
-		j = data.x;
-		k = data.y;
-		index = 0;
-	} else if (angle.between( 90, 180, 'L')) {
-		j = data.y;
-		k = 1 - data.x;
-		index = 1;
-	} else if (angle.between(180, 270, 'L')) {
-		j = 1 - data.x;
-		k = 1 - data.y;
-		index = 2;
-	} else if (angle.between(270, 360, 'L')) {
-		j = 1 - data.y;
-		k = data.x;
-		index = 3;
-	} else {
-		throw 'WrongRayAngleException';
+Cell.prototype.rcGetRays = function (data, light) {
+	var cfg = this.maze.cfg, rays = [];
+	if (light) {
+		cfg = $.extend(cfg);
+		cfg.quality/=2;
 	}
-	
-	if ([0, 1].has(k, j)) {
-		if ([0, 1].has(k) && [0, 1].has(j)) {
-			throw 'DotInCornerException';
-		} else if (k == 0 || j == 1) {
-			L = 0;
-			w = (j == 1) ? 1 : 0;
-			x = (j == 1) ? 1 - k : 1 - j;
-			cell = this.getNeighbour(
-				(j == 1) ? 'right' : 'top', true
-			);
-		} else {
-			var dir  = (j == 0) ? 'right' : 'top';
-			var size = (j == 0) ? k : j;
-			return (this.rcWallRay({
-				dir   : dir,
-				angle : data.angle,
-				size  : size
-			}));
-		}
-	} else {
-		a  = data.angle.degreeSingle() % (90).degree();
-
-		if (a == 0) {
-			w = index + 2;
-			L = k;
-			x = 1 - j;
-			cell = this.getNeighbour(dirShift(index), true);
-
-		} else {
-			m = j + k * a.tan();
-			if (m > 1) {
-				w = 1;
-				L = (1 - j) / a.sin();
-				x = (1 - k) + (1 - j)/a.tan();
-				cell = this.getNeighbour(dirShift(index + 1), true);
-			} else {
-				L = k / a.cos();
-				if (m == 1) {
-					w = 2;
-					x = 1;
-					cell = this.getCornerNeighbour(dirShift(index), dirShift(index + 1));
-				} else {
-					w = 0;
-					x = 1 - j - a.tan();
-					cell = this.getNeighbour(dirShift(index), true);
-				}
-			}
-		}
-		result = {
-			angle : a
-		};
-		
-		if (cell) {
-			result = cell.rcFullRay({
-				wall  : dirShift(index + w + 2),
-				angle : data.angle,
-				size  : x
-			});
-			L += result.length;
-		}
-		L *= result.angle.cos();
+	for (var i = -cfg.angle/2; i < cfg.angle/2; i+=(50/cfg.quality)) {
+		rays.push(this.rcRay({
+			removeFish : data.angle,
+			angle : i.degree() + data.angle,
+			x     : data.x == undefined ? 0.5 : data.x,
+			y     : data.y == undefined ? 0.5 : data.y
+		}));
 	}
-	return {
-		length : L
-	};
+	return rays;
 }

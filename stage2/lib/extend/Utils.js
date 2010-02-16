@@ -112,6 +112,10 @@ String.prototype.decToHex = function () {
 	return Number(this).decToHex();
 }
 
+String.prototype.replaceAll = function (find, replace) {
+	return this.split(find).join(replace);
+}
+
 Number.prototype.decToHex = function () {
 	return this.round(0).toString(16);
 }

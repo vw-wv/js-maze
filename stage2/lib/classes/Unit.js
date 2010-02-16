@@ -38,5 +38,8 @@ Unit.prototype = {
 	},
 	getCell : function () {
 		return this.maze.getCell(this.coord.x, this.coord.y);
+	},
+	getViewAngle : function () {
+		return (90 * dirShift(this.dir)).degree();
 	}
 }

@@ -277,7 +277,9 @@
 						var backup = $obj.keyboardFunc;
 						var events = [];
 						for (var k = 0; k < ei.length; k++) {
-							events.push($k.keys.cont[ei[k]])
+							var event = $k.keys.cont[ei[k]];
+							event.is = eIsKeyFunc;
+							events.push(event);
 						}
 						$obj.keyboardFunc = bind.func;
 						$obj.keyboardFunc(events, bind);
@@ -329,6 +331,19 @@
 		}
 	}
 
+	var eIsKeyFunc = function () {
+		var keys = arguments;
+		if ($.isArray(keys[0])) {
+			keys = keys[0];
+		}
+		for (var k = 0; k < keys.length; k++) {
+			if (this.keyCode == $k.keyCodes[keys[k]]) {
+				return true;
+			}
+		}
+		return false;
+	};
+	
 	var inArrayR = function (value, array) {
 		for (var i = 0; i < array.length; i++) {
 			if (typeof array[i] == 'object' || $.isArray(array[i])) {

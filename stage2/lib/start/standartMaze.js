@@ -7,40 +7,11 @@ Start.standartMaze = function (str) {
 		.mapOutput();
 	var unit = (new Unit (maze))
 		.toStart()
+		.rcRenderView()
 		.mapOutput();
-	var cfg  = {
-		angle   : 100,
-		width   : 1600,
-		height  : 700,
-		texture : false,
-		quality : 160,
-		fps     : 40,
-		moveFrames   : 10,
-		rotateFrames : 10
-	}
-	var rayCast = function () {
-		maze.rcRenderRays(
-			unit.rcGetRays({
-				angle : (90 * dirShift(unit.dir)).degree(),
-				x : 0.5,
-				y : 0.5
-			}, cfg)
-		, cfg);
-	};
-	rayCast();
-
-	var arrows = {
-		37 : 'left' ,
-		38 : 'top'  ,
-		39 : 'right',
-		40 : 'bottom',
-		87 : 'w',
-		83 : 's',
-		65 : 'a',
-		68 : 'd'
-	};
+		
 	var checkFinish = function () {
-		if (unit.getCell().diff.isFinish) {
+		if (unit.finish()) {
 			alert('Ура, пройдено за ' + sw.pause().getString() + '!');
 			$_GET['code'] ? alert ("Ссылка для друзей:\n" + window.location) :
 				moveTo('lab', parseInt($_GET['lab'] || 0) + 1);
@@ -49,16 +20,20 @@ Start.standartMaze = function (str) {
 	$
 		.keyboard('[aleft|aright|a|d]', function (e) {
 			sw.start();
-			var dir = ['left', 'a'].has(arrows[e[0].keyCode]) ? 'left' : 'right';
-			unit.rcRotate(dir, cfg).mapOutput();
-			// rayCast();
+			var dir = e[0].is('aleft', 'a') ? 'left' : 'right';
+			unit
+				.rcRenderRotate(dir)
+				.rotate(dir)
+				.mapOutput();
 		})
 		.keyboard('[aup|adown|w|s]', function (e) {
 			sw.start();
-			// unit.move(['bottom', 's'].has(arrows[e[0].keyCode])).mapOutput();
-			unit.rcMove(['bottom', 's'].has(arrows[e[0].keyCode]), cfg).mapOutput();
+			var back = e[0].is('adown', 's');
+			unit
+				.rcRenderMove(back)
+				.move(back)
+				.mapOutput();
 			checkFinish();
-			rayCast();
 		})
 		.keyboard('e', function () {
 			moveTo('editor', maze.getCode());

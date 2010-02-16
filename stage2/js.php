@@ -6,6 +6,7 @@
 		glob('./lib/classes/*.js'),
 		glob('./lib/extend/*.js'),
 		glob('./lib/output/*.js'),
+		glob('./lib/rayCaster/*.js'),
 		glob('./lib/start/*.js'),
 		glob('./lib/*.js')
 	);
