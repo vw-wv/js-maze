@@ -29,8 +29,6 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 		if (texX > 0) {
 			texX -= (stripHeight-1) * stripWidth;
 		}
-		
-		// ifChanged(strips[i], 'height', stripHeight.round() + 'px');
 
 		var texture = rays[i].last.diff.isStart  ? 'startWall' :
 		              rays[i].last.diff.isFinish ? 'finishWall' :

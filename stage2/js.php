@@ -19,3 +19,5 @@
 	$src .= '//' . (microtime(1) - $s);
 
     echo $src;
+
+// test
