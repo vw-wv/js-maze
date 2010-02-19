@@ -71,11 +71,15 @@ Maze.prototype.getCode = function () {
 	if (coordsEquals (this.diff.startCoord, this.diff.finishCoord)) {
 		throw 'StartFinishEquals';
 	}
-	var code = [
+	var code = [  2,
 		this.size.width, this.size.height,
 		this.diff.startCoord.x , this.diff.startCoord.y,
 		this.diff.finishCoord.x, this.diff.finishCoord.y
-	].join('.');
+	].map(function (value) {
+		var hex = value.decToHex();
+		return (hex.length < 2) ?
+			'0' + hex : hex;
+	}).join('');
 	var c = this.container;
 	for (var i = 0; i < c.length; i++) {
 		var line = '';
@@ -83,7 +87,7 @@ Maze.prototype.getCode = function () {
 			var w = c[i][k].walls;
 			line += (w.right ? '1' : '0') + (w.bottom ? '1' : '0');
 		}
-		code += ' ' + line.binToHex();
+		code += line.binToHex();
 	}
 	return code;
-}
+};

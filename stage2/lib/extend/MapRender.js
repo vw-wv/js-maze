@@ -10,18 +10,18 @@ Maze.prototype.mapRender = function () {
 	}
 	html += '</table>';
 	return html;
-}
+};
 
 Cell.prototype.getHtmlElem = function () {
 	if (!this.htmlElem) {
 		this.htmlElem = $('#' + this.getId());
 	}
 	return this.htmlElem;
-}
+};
 
 Cell.prototype.getId = function () {
 	return 'c-' + this.coord.x + '-' + this.coord.y;
-}
+};
 
 Cell.prototype.mapRender = function () {
 	var className = [];
@@ -32,4 +32,4 @@ Cell.prototype.mapRender = function () {
 	if (this.diff.isStart)  className.push('start');
 	if (this.diff.isFinish) className.push('finish');
 	return '<td id="' + this.getId() + '" class="' + className.join(' ') + '"></td>';
-}
+};
