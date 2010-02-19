@@ -26,7 +26,7 @@ var dirShift = function (dir, shift) {
 };
 
 var getStripWidth = function (maze, rays) {
-	return Math.floor(maze.cfg.width / rays.length * 75) / 75;
+	return (maze.cfg.width / rays.length).round(2);
 };
 
 var coordsEquals = function (a, b) {

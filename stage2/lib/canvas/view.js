@@ -16,15 +16,21 @@ Unit.prototype.rcCanvasRaysTexture = function (rays) {
 						  rays[i].last.diff.isFinish ? 'finishWall' :
 										  'mainWall';
 			var im = images[texture];
-			var ih = iw = (height / L).round();
-			var top  = ((height - ih) / 2).round();
-			var texX = (x*im.width).round();
-
-			while (texX > im.width-stripWidth) {
-				texX -= im.width-stripWidth;
+			var ihw = (height / L);
+			var top  = ((height - ihw) / 2);
+			var texX = (x*im.width).ceil();
+			var texW = (stripWidth*im.width/ihw).ceil();
+			if (texX+texW > im.width) {
+				texX = (texX - im.width).round().abs();
 			}
-			var texW = (stripWidth*im.width/ih).round();
-			ctx.drawImage(im, texX, 0, texW, im.width, i*stripWidth, top, stripWidth, ih);
+			
+			ctx.drawImage(im, texX, 0, texW, im.width, i*stripWidth, top, stripWidth.ceil(), ihw);
+			var opacity = L < 0.5 ? 200 : 200/(L+0.5);
+			opacity += dirShift(unit.dir, rays[i].wall) % 2 ? 0 : 30;
+			opacity = 1 - (opacity/200);
+			opacity*= opacity;
+			ctx.fillStyle = "rgba(0,0,0," + opacity.toFixed(2) + ")";         // " + opacity.toFixed(2) + "
+			ctx.fillRect(i*stripWidth-3, top, (stripWidth).ceil()+7, ihw);
 		}
 	});
 	return this;
