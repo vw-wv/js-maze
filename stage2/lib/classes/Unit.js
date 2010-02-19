@@ -41,5 +41,10 @@ Unit.prototype = {
 	},
 	getViewAngle : function () {
 		return (90 * dirShift(this.dir)).degree();
+	},
+	noticeAboutFinish : function (sw) {
+		alert('Ура, пройдено за ' + sw.pause().getString() + '!');
+		$_GET['code'] ? alert ("Ссылка для друзей:\n" + window.location) :
+			moveTo('lab', parseInt($_GET['lab'] || 0) + 1);
 	}
 }

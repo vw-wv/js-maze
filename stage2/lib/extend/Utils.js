@@ -27,16 +27,16 @@ var dirShift = function (dir, shift) {
 
 var getStripWidth = function (maze, rays) {
 	return Math.floor(maze.cfg.width / rays.length * 75) / 75;
-}
+};
 
 var coordsEquals = function (a, b) {
 	return (a.x == b.x && a.y == b.y);
-}
+};
 
 var moveTo = function (key, value) {
 	var uri = window.location.href.split('?')[0];
 	window.location = uri + '?' + key + '=' + value;
-}
+};
 
 var $_GET = (function() {
 	var uri = decodeURIComponent(location.search), result = {};
@@ -81,7 +81,7 @@ String.prototype.binToHex = function () {
 	while (str.length % 4) {
 		str = '0' + str;
 	}
-	
+
 	return str.match(/.{4}/g).map(function (i) {
 		return {
 			'0000' : '0', '0001' : '1', '0010' : '2', '0011' : '3',
@@ -90,7 +90,7 @@ String.prototype.binToHex = function () {
 			'1100' : 'c', '1101' : 'd', '1110' : 'e', '1111' : 'f'
 		}[i];
 	}).join('');
-}
+};
 
 String.prototype.hexToBin = function () {
 	var str = this.toLowerCase();
@@ -106,23 +106,23 @@ String.prototype.hexToBin = function () {
 			'c' : '1100', 'd' : '1101', 'e' : '1110', 'f' : '1111'
 		}[i];
 	}).join('');
-}
+};
 
 String.prototype.hexToDec = function () {
 	return parseInt(this, 16);
-}
+};
 
 String.prototype.decToHex = function () {
 	return Number(this).decToHex();
-}
+};
 
 String.prototype.replaceAll = function (find, replace) {
 	return this.split(find).join(replace);
-}
+};
 
 Number.prototype.decToHex = function () {
 	return this.round(0).toString(16);
-}
+};
 
 Number.prototype.toColor = function (color) {
 	var hex = this.decToHex();
@@ -140,14 +140,14 @@ Number.prototype.toColor = function (color) {
 		}
 		return '#' + hex;
 	}
-}
+};
 
 Array.prototype.map = function (fn) {
 	for (var i = 0; i < this.length; i++) {
 		this[i] = fn(this[i]);
 	}
 	return this;
-}
+};
 
 Array.prototype.has = function () {
 	var a = arguments;
@@ -157,7 +157,7 @@ Array.prototype.has = function () {
 		}
 	}
 	return false;
-}
+};
 
 Array.prototype.search = function (elem) {
 	for (var i = 0; i < this.length; i++) {
@@ -166,32 +166,32 @@ Array.prototype.search = function (elem) {
 		}
 	}
 	return false;
-}
+};
 
 Math.degree = function (degree) {
 	var d = Math.PI / 180;
 	return (isNaN(degree)) ? d : d * degree;
-}
+};
 
 Math.degreeSingle = function (degree) {
 	degree %= this.degree(360);
 	return (degree < 0) ? this.degree(360) + degree : degree;
-}
+};
 
 Math.getDegree = function (radian) {
 	return radian / Math.PI * 180;
-}
+};
 
 Number.prototype.between = function (n1, n2, equals) {
 	return (equals == 'L' && this == n1) ||
 	       (equals == 'R' && this == n2) ||
 	       (this > n1 && this < n2) ||
 	       (equals === true && (this == n1 || this == n2));
-}
+};
 
 Number.prototype.round = function (digits) {
 	return parseFloat(this.toFixed(digits * 1));
-}
+};
 
 // "this.toFixed is not a function" without this string
 Math.abs((0).round());

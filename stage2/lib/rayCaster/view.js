@@ -1,9 +1,11 @@
-
-
 Unit.prototype.rcRenderRays = function (rays) {
-	this.rcRenderRaysTexture(rays);
+	if ($_GET['canvas']) {
+		this.rcCanvasRaysTexture(rays);
+	} else {
+		this.rcRenderRaysTexture(rays);
+	}
 	return this;
-}
+};
 
 Unit.prototype.rcRenderRaysTexture = function (rays) {
 	var cfg    = this.maze.cfg;
@@ -15,7 +17,7 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 		if (elem.style[name] != value) {
 			elem.style[name] = value;
 		}
-	}
+	};
 	for (var i = 0; i < rays.length; i++) {
 		var x = rays[i].dist;
 		var L = rays[i].length;

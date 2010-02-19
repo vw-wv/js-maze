@@ -18,13 +18,13 @@ Maze = function () {
 	};
 	this.cfg = {
 		angle   : 100,
-		width   : 800,
-		height  : 360,
+		width   : 1200,
+		height  : 500,
 		texture : false,
-		quality : 80,
+		quality : 250,
 		fps     : 50,
 		moveFrames   : 6,
-		rotateFrames : 6
+		rotateFrames : 7
 	};
 }
 Maze.prototype = {
