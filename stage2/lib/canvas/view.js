@@ -16,21 +16,24 @@ Unit.prototype.rcCanvasRaysTexture = function (rays) {
 						  rays[i].last.diff.isFinish ? 'finishWall' :
 										  'mainWall';
 			var im = images[texture];
-			var ihw = (height / L);
-			var top  = ((height - ihw) / 2);
-			var texX = (x*im.width).ceil();
-			var texW = (stripWidth*im.width/ihw).ceil();
+			var ihw  = (height / L);
+			var top  = (height - ihw) / 2;
+			var texX = (im.width - x*im.width).round(3);
+			var texW = (stripWidth*im.width/ihw).round(3);
 			if (texX+texW > im.width) {
 				texX = (texX - im.width).round().abs();
 			}
-			
-			ctx.drawImage(im, texX, 0, texW, im.width, i*stripWidth, top, stripWidth.ceil(), ihw);
-			var opacity = L < 0.5 ? 200 : 200/(L+0.5);
-			opacity += dirShift(unit.dir, rays[i].wall) % 2 ? 0 : 30;
-			opacity = 1 - (opacity/200);
-			opacity*= opacity;
-			ctx.fillStyle = "rgba(0,0,0," + opacity.toFixed(2) + ")";         // " + opacity.toFixed(2) + "
-			ctx.fillRect(i*stripWidth-3, top, (stripWidth).ceil()+7, ihw);
+
+			ctx.drawImage(im, texX, 0, texW, im.height, (i*stripWidth).floor(), top, stripWidth, ihw);
+
+			if (cfg.light) {
+				var opacity = L < 0.5 ? 200 : 200/(L+0.5);
+				opacity += dirShift(unit.dir, rays[i].wall) % 2 ? 0 : 30;
+				opacity = 1 - (opacity/200);
+				opacity*= opacity;
+				ctx.fillStyle = "rgba(0,0,0," + opacity.toFixed(2) + ")";         // " + opacity.toFixed(2) + "
+				ctx.fillRect((i*stripWidth).floor(), top, stripWidth, ihw);
+			}
 		}
 	});
 	return this;
@@ -58,14 +61,16 @@ Unit.prototype.rcCanvasRaysPlain = function (rays) {
 	unit.rcCanvasRaysInit(function (images) {
 		var ctx    = unit.canvas.getContext();
 		var cfg    = unit.maze.cfg;
-		var width  = cfg.width;
 		var height = cfg.height;
 		var stripWidth = getStripWidth(unit.maze, rays);
 		for (var i = 0; i < rays.length; i++) {
 			var L = rays[i].length;
 			var last = rays[i].last;
-			var color = L < 0.5 ? 200 : 200/(L+0.5);
-			color += dirShift(unit.dir, rays[i].wall) % 2 ? 0 : 30;
+			var color = 200;
+			if (cfg.light) {
+				color = L < 0.5 ? color : color/(L+0.5);
+				color += dirShift(unit.dir, rays[i].wall) % 2 ? 0 : 30;
+			}
 			color  = last.diff.isStart  ? (color/2).toColor('green') :
 					 last.diff.isFinish ? color.toColor('red') :
 										  color.toColor();

@@ -5,7 +5,7 @@ Start.standartMaze = function (str) {
 	var maze = (new Maze).fromString(str);
 	var unit = (new Unit (maze))
 		.toStart();
-	if ($_GET['canvas']) {
+	if (maze.cfg.engine == 'Canvas') {
 		unit.canvas =  new Canvas(maze, document.getElementById('canvas'));
 	}
 	unit.rcRenderView();

@@ -1,13 +1,13 @@
 Unit.prototype.rcRenderRays = function (rays) {
-	if ($_GET['canvas']) {
-		this.rcCanvasRaysTexture(rays);
-	} else {
-		this.rcRenderRaysTexture(rays);
-	}
+	var cfg = this.maze.cfg;
+	var engine = cfg.engine == 'Html' ? 'Html' : 'Canvas';
+	var type   = cfg.texture ? 'Texture' : 'Plain';
+	var method = 'rc' + engine + 'Rays' + type;
+	this[method](rays);
 	return this;
 };
 
-Unit.prototype.rcRenderRaysTexture = function (rays) {
+Unit.prototype.rcHtmlRaysTexture = function (rays) {
 	var cfg    = this.maze.cfg;
 	var width  = cfg.width;
 	var height = cfg.height;
@@ -35,7 +35,9 @@ Unit.prototype.rcRenderRaysTexture = function (rays) {
 		var texture = rays[i].last.diff.isStart  ? 'startWall' :
 		              rays[i].last.diff.isFinish ? 'finishWall' :
 		                              'mainWall';
+		
 		var img = strips[i].img;
+
 		ifChanged(img,    'top', stripTop.round() + 'px');
 		ifChanged(img, 'height', stripHeight.round() + 'px');
 		ifChanged(img,  'width', (stripHeight * stripWidth).round() + 'px');
@@ -123,7 +125,7 @@ Unit.prototype.rcGetImageStrips = function (rays) {
 	return this.rcImageStrips;
 }
 
-Unit.prototype.rcRenderRaysPlain = function (rays) {
+Unit.prototype.rcHtmlRaysPlain = function (rays) {
 	var cfg    = this.maze.cfg;
 	var width  = cfg.width;
 	var height = cfg.height;

@@ -99,7 +99,7 @@ Cell.prototype.rcFullRay = function (data) {
 		});
 		L += result.length;
 	}
-	return $.extend({}, {
+	return $.extend({
 		wall   : dirShift (data.wall + 2 + w),
 		corner : corner,
 		dist   : x,
@@ -119,7 +119,7 @@ Cell.prototype.rcRay = function (data) {
 		(angle.between( 90, 180, 'L')) ? [  data.y, 1-data.x, 1] :
 		(angle.between(180, 270, 'L')) ? [1-data.x, 1-data.y, 2] :
 		(angle.between(270, 360, 'L')) ? [1-data.y,   data.x, 3] : null;
-	
+
 	if (tmp) {
 		j     = tmp[0];
 		k     = tmp[1];
@@ -158,11 +158,10 @@ Cell.prototype.rcRay = function (data) {
 	}
 
 	if (!isNaN(data.removeFish)) {
-		var diff = (data.angle - data.removeFish).abs();
-		L *= diff.cos();
+		L *= (data.angle - data.removeFish).abs().cos();
 	}
 
-	return $.extend({}, {
+	return $.extend({
 		wall   : dirShift (w + index),
 		corner : false,
 		dist   : x,
@@ -170,7 +169,7 @@ Cell.prototype.rcRay = function (data) {
 	}, result, {
 		length : L
 	});
-}
+};
 
 Cell.prototype.rcGetRays = function (data, light) {
 	var cfg = this.maze.cfg, rays = [];
@@ -178,8 +177,7 @@ Cell.prototype.rcGetRays = function (data, light) {
 		cfg = $.extend(cfg);
 		// cfg.quality/=2;
 	}
-	
-	for (var i = -cfg.angle/2; i < cfg.angle/2; i+=(50/cfg.quality)) {
+	for (var i = -cfg.angle/2; i < cfg.angle/2; i=(i+cfg.angle/cfg.quality).round(8)) {
 		rays.push(this.rcRay({
 			removeFish : data.angle,
 			angle : i.degree() + data.angle,

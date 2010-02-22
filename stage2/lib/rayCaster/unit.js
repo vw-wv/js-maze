@@ -2,15 +2,16 @@ Unit.prototype.rcRenderRotate = function (dir) {
 	var unit  = this;
 	var angle = unit.getViewAngle();
 	var cfg   = unit.maze.cfg;
-	var step  = (dir == 'right' ? 1 : -1) * (90).degree() / cfg.rotateFrames;
+	var rotateFrames = cfg.rotateFrames + 1;
+	var step  = (dir == 'right' ? 1 : -1) * (90).degree() / rotateFrames;
 	var frame = 1;
 	
 	unit.rcFrameRender(function () {
 		unit.rcRenderRays(unit.getCell().rcGetRays({
 			angle : angle+(step*frame)
-		}, frame != cfg.rotateFrames));
+		}, frame != rotateFrames));
 
-		if (++frame > cfg.rotateFrames) {
+		if (++frame > rotateFrames) {
 			unit.rcFrameRender()
 		}
 	});
@@ -38,8 +39,10 @@ Unit.prototype.rcRenderMove = function (back) {
 	var cell   = unit.getCell();
 	// Unit moves to the
 	var nbCell = cell.getNeighbour(dir, true);
+
+	var moveFrames = cfg.moveFrames + 1;
 	// Unit moves for one step on 
-	var step   = (back ? -1 : 1) / cfg.moveFrames;
+	var step   = (back ? -1 : 1) / moveFrames;
 
 	// Start logic
 	var frame  = 1;
@@ -70,12 +73,12 @@ Unit.prototype.rcRenderMove = function (back) {
 					angle : angle,
 					x     : x,
 					y     : y
-				}, frame != cfg.moveFrames)
+				}, frame != moveFrames)
 			);
-			if (cell != nbCell && frame >= cfg.moveFrames / 2) {
+			if (cell != nbCell && frame >= moveFrames / 2) {
 				cell = nbCell;
 			}
-			if (++frame > cfg.moveFrames) {
+			if (++frame > moveFrames) {
 				unit.rcFrameRender();
 			}
 		});

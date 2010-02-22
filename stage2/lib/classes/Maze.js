@@ -18,15 +18,17 @@ Maze = function () {
 	};
 	this.cfg = {
 		angle   : 100,
-		width   : 1200,
-		height  : 500,
-		texture : false,
-		quality : 250,
+		width   : 1350,
+		height  : 725,
+		texture : true,
+		engine  : 'Canvas',
+		light   : true,
+		quality : 450,
 		fps     : 50,
-		moveFrames   : 6,
-		rotateFrames : 7
+		moveFrames   : 5, // x%2 == 1 !!
+		rotateFrames : 5
 	};
-}
+};
 Maze.prototype = {
 	addCell : function () {
 		var y = this.container   .length - 1;
