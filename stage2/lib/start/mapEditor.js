@@ -5,6 +5,7 @@ Start.mapEditor = function (code) {
 	(typeof code == 'string') ? maze.fromString(code) :
 		maze.mapEditor($_GET['w'] || 8, $_GET['h'] || 6);
 	maze.mapOutput().getCell(1, 1).setActive();
+	$('div.main').html('Стрелочками - двигаемся, awsd - ставим стены. <br />z - старт(зеленый). x - финиш(красный). enter - пройти');
 	var arrows = {37:'left',38:'top',39:'right',40:'bottom'};
 	$
 		.keyboard('(arrows)', function (e) {
@@ -27,7 +28,10 @@ Start.mapEditor = function (code) {
 		})
 		.keyboard('enter', function () {
 			try {
-				moveTo('code', maze.getCode());
+				moveTo({
+					'type' : 'game',
+					'code' : maze.getCode()
+				});
 			} catch (e) {
 				alert({
 					'EmptyStart'  : 'Вы не указали начало',

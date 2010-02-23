@@ -274,7 +274,7 @@ function player(id)
         time = time.value();
         if (a < $lab_code.length) {
             alert("Поздравляем, вы прошли уровень " + a + " за " + time + " секунд!");
-            window.location = "index.html?a=" + a;
+            window.location = "index.php?a=" + a;
         }
         else {
             alert("Поздравляем, вы прошли последний уровень " + a + " за " + time + " секунд!");

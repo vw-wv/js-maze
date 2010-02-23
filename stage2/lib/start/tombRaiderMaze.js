@@ -5,24 +5,7 @@ Start.tombRaiderMaze = function (str) {
 		.fromString(str)
 		.mapOutput();
 	var unit = (new TombRaider (maze))
-		.toStart()
-	//	.mapOutput();
-	// unit.getCell().diff.isFinish
-	var timer;
-	if (timer == 'finished') {
-		return;
-	}
-	$
-		.keyboard('e', function () {
-			moveTo('editor', maze.getCode());
-		});
-	/* timer = setInterval(function () {
-		if (!unit.next() || unit.getCell().diff.isFinish) {
-			clearInterval(timer);
-			unit.highlight();
-		}
-		unit.mapOutput();
-	} , 40); */
+		.toStart();
 
 	while (unit.next()) {
 		if (unit.finish()) {
@@ -30,4 +13,4 @@ Start.tombRaiderMaze = function (str) {
 			break;
 		}
 	}
-}
+};

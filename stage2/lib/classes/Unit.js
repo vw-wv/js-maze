@@ -44,7 +44,11 @@ Unit.prototype = {
 	},
 	noticeAboutFinish : function (sw) {
 		alert('Ура, пройдено за ' + sw.pause().getString() + '!');
-		$_GET['code'] ? alert ("Ссылка для друзей:\n" + window.location) :
-			moveTo('lab', parseInt($_GET['lab'] || 0) + 1);
+		if (!$_GET['code']) {
+			moveTo({
+				'type' : 'game',
+				'lab'  : parseInt($_GET['lab'] || 0) + 1
+			});
+		}
 	}
-}
+};

@@ -1,8 +1,19 @@
 var Start = Start || {};
 
 Start.standartMaze = function (str) {
-	var sw = new StopWatch;
+	var sw  = new StopWatch;
 	var maze = (new Maze).fromString(str);
+	if ($.cookie('resolution')) {
+		var res = $.cookie('resolution').split('x');
+		maze.setConfig({
+			width   : res[0],
+			height  : res[1],
+			texture : $.cookie('texture'),
+			engine  : $.cookie('engine'),
+			light   : $.cookie('light'),
+			quality : res[0] / $.cookie('quality')
+		});
+	}
 	var unit = (new Unit (maze))
 		.toStart();
 	if (maze.cfg.engine == 'Canvas') {

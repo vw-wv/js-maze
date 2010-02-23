@@ -1,6 +1,7 @@
 html {
 	background : black;
 	color      : white;
+	font       : 14px sans-serif;
 }
 table.map {
 	border-collapse : collapse;
@@ -55,4 +56,33 @@ table.map td.active {
 .unit-left {
 	border-right  : 12px solid #c3c;
 	border-left   : 0;
+}
+select, input {
+	margin : 4px;
+	padding: 2px;
+	border : 1px solid black;
+	font-size : 14px;
+}
+input.size {
+	width : 180px;
+}
+select, input.submit {
+	display : block;
+	width : 406px;
+}
+label {
+	display : block;
+	width : 400px;
+	margin : 4px;
+	padding: 2px;
+	border : 1px solid black;
+	background : white;
+	color: black;
+	font-size : 14px;
+}
+a {
+	color : #ddd;
+}
+a:hover {
+	text-decoration : none;
 }

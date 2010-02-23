@@ -33,9 +33,22 @@ var coordsEquals = function (a, b) {
 	return (a.x == b.x && a.y == b.y);
 };
 
+
 var moveTo = function (key, value) {
+	var d = function (str) {
+		return decodeURIComponent(str);
+	};
 	var uri = window.location.href.split('?')[0];
-	window.location = uri + '?' + key + '=' + value;
+	if (typeof key == 'string') {
+		var k = key;
+		key = {};
+		key[k] = value;
+	}
+	var q = [];
+	for (var i in key) {
+		q.push(d(i) + '=' + d(key[i]));
+	}
+	window.location = uri + '?' + q.join('&');
 };
 
 var $_GET = (function() {
@@ -140,6 +153,10 @@ Number.prototype.toColor = function (color) {
 		}
 		return '#' + hex;
 	}
+};
+
+var is_numeric = function (mixed_var) {
+    return (['number', 'string'].has(typeof(mixed_var)) && mixed_var !== '' && !isNaN(mixed_var));
 };
 
 Array.prototype.map = function (fn) {

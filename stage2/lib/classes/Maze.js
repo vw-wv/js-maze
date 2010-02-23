@@ -18,12 +18,12 @@ Maze = function () {
 	};
 	this.cfg = {
 		angle   : 100,
-		width   : 1350,
-		height  : 725,
+		width   : 720,
+		height  : 360,
 		texture : true,
 		engine  : 'Canvas',
 		light   : true,
-		quality : 450,
+		quality : 240,
 		fps     : 50,
 		moveFrames   : 5, // x%2 == 1 !!
 		rotateFrames : 5
@@ -57,8 +57,7 @@ Maze.prototype = {
 	getCell : function (x, y) {
 		var c = this.container;
 		x--; y--;
-		var cell = c[y] && c[y][x] ? c[y][x] : null;
-		return cell;
+		return c[y] && c[y][x] ? c[y][x] : null;
 	},
 	newLine : function () {
 		var lines = this.container.length;
@@ -82,5 +81,16 @@ Maze.prototype = {
 			y = this.diff.startCoord.y;
 		}
 		return new Unit (this, x, y);
+	},
+	setConfig : function (cfg) {
+		for (var i in cfg) {
+			if (cfg[i] !== null && this.cfg[i] !== undefined) {
+				this.cfg[i] = cfg[i];
+				if (is_numeric(cfg[i])) {
+					this.cfg[i] *= 1;	
+				}
+			}
+		}
+		return this;
 	}
 };

@@ -48,7 +48,7 @@ Unit.prototype.rcHtmlRaysTexture = function (rays) {
 			img.src  = imageSrc;
 		}
 		
-		if (!$.browser.msie) {
+		if (!$.browser.msie && cfg.light) {
 			var opacity = L < 0.5 ? 200 : 200/(L+0.5);
 			opacity += dirShift(this.dir, rays[i].wall) % 2 ? 0 : 30;
 			opacity /= 200;
@@ -100,7 +100,6 @@ Unit.prototype.rcGetImageStrips = function (rays) {
 		var stripWidth = getStripWidth(this.maze, rays);
 
 		var screen = this.rcGetScreen();
-
 		for (var i=0; i < width; i+=stripWidth) {
 			var strip = document.createElement("div");
 			strip.style.position = "absolute";
@@ -146,9 +145,11 @@ Unit.prototype.rcHtmlRaysPlain = function (rays) {
 		var L    = rays[i].length;
 		var rayHeight = height / L;
 		var rayMarg   = (height - rayHeight) / 2;
-
-		var color = L < 0.5 ? 200 : 200/(L+0.5);
-		color += dirShift(this.dir, rays[i].wall) % 2 ? 0 : 30;
+		var color = 200;
+		if (cfg.light) {
+			color = L < 0.5 ? color : color/(L+0.5);
+			color += dirShift(this.dir, rays[i].wall) % 2 ? 0 : 30;
+		}
 		color  = last.diff.isStart  ? (color/2).toColor('green') :
 		         last.diff.isFinish ? color.toColor('red') :
 		                              color.toColor();
