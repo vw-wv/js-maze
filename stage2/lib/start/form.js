@@ -2,11 +2,11 @@ var Start = Start || {};
 
 Start.showForm = function () {
 	var save = function () {
-		$.cookie('resolution',   $form.find('[name=resolution]').val());
-		$.cookie('quality',      $form.find('[name=quality]'   ).val());
-		$.cookie('engine',       $form.find('[name=engine]'    ).val());
-		$.cookie('texture',    !!$form.find('[name=texture]'   ).attr('checked'));
-		$.cookie('light',      !!$form.find('[name=light]'     ).attr('checked'));
+		$.cookie('resolution', $form.find('[name=resolution]').val());
+		$.cookie('quality',    $form.find('[name=quality]'   ).val());
+		$.cookie('engine',     $form.find('[name=engine]'    ).val());
+		$.cookie('texture',    $form.find('[name=texture]'   ).attr('checked') ? 1 : 0);
+		$.cookie('light',      $form.find('[name=light]'     ).attr('checked') ? 1 : 0);
 	};
 	var $form = $('div.form');
 	$form.find('div').hide();
@@ -20,8 +20,8 @@ Start.showForm = function () {
 		save();
 		moveTo({
 			type : 'editor',
-			w : $form.find('[name=w]'    ).val(),
-			h : $form.find('[name=h]'    ).val()
+			w : $form.find('[name=w]').val(),
+			h : $form.find('[name=h]').val()
 		});
 	});
 	save();

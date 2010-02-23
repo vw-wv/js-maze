@@ -87,7 +87,7 @@ Maze.prototype = {
 			if (cfg[i] !== null && this.cfg[i] !== undefined) {
 				this.cfg[i] = cfg[i];
 				if (is_numeric(cfg[i])) {
-					this.cfg[i] *= 1;	
+					this.cfg[i] *= 1;
 				}
 			}
 		}
