@@ -28,7 +28,7 @@ Unit.prototype.rcHtmlRaysTexture = function (rays) {
 		var stripHeight = height / L;
 		var stripTop    = (height - stripHeight) / 2;
 		var sw = stripHeight * stripWidth;
-		var texX = -(x*sw).round()+3;
+		var texX = (x*sw).round()-3;
 		if (texX.abs() > stripHeight * stripWidth) {
 			texX += stripHeight * stripWidth;
 		}
