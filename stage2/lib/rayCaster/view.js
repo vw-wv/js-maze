@@ -19,6 +19,9 @@ Unit.prototype.rcHtmlRaysTexture = function (rays) {
 		}
 	};
 	for (var i = 0; i < rays.length; i++) {
+		if (!strips[i]) {
+			break;
+		}
 		var x = rays[i].dist;
 		var L = rays[i].length;
 		var stripHeight = height / L;
