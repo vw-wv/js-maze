@@ -17,26 +17,19 @@ TombRaider.prototype.next = function () {
 		this.cells.push(this.getCell());
 		this.move(cell);
 		return true;
-	} else {
+	} else if (this.cells.length) {
 		cell = this.cells.pop();
-		if (cell) {
-			this.move(cell);
-		}
-		return true;
+		this.move(cell);
+	} else {
+		return false;
 	}
-	return false;
 }
 
 TombRaider.prototype.searchUnvisited = function () {
-	var dirs = ['top', 'right', 'bottom', 'left'];
 	var cell = this.getCell();
-	for (var i = 0; i < dirs.length; i++) {
-		var d = dirs[i];
-		if (cell.walls[d]) {
-			continue;
-		}
-		var nb = cell.getNeighbour(d);
-		if (nb && !nb.trStone) {
+	for (var i = 0; i < 4; i++) {
+		var nb = cell.getNeighbour(dirShift(i), true);
+		if (nb && !nb.trStone && !nb.diff.isStart) {
 			return nb;
 		}
 	}

@@ -37,5 +37,17 @@ Start.standartMaze = function (str) {
 		if (unit.finish()) {
 			unit.noticeAboutFinish(sw);
 		}
+	})
+	.keyboard('c', function () {
+		var unit = (new TombRaider (maze)).toStart();
+
+		while (unit.next()) {
+			if (unit.finish()) {
+				alert('Я смог пройти!');
+				return;
+			}
+		}
+		
+		alert('Я не смог пройти!');
 	});
 };
