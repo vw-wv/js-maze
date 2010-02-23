@@ -5,8 +5,8 @@ Start.showForm = function () {
 		$.cookie('resolution',   $form.find('[name=resolution]').val());
 		$.cookie('quality',      $form.find('[name=quality]'   ).val());
 		$.cookie('engine',       $form.find('[name=engine]'    ).val());
-		$.cookie('texture',    !!$form.find('[name=texture]'   ).val());
-		$.cookie('light',      !!$form.find('[name=light]'     ).val());
+		$.cookie('texture',    !!$form.find('[name=texture]'   ).attr('checked'));
+		$.cookie('light',      !!$form.find('[name=light]'     ).attr('checked'));
 	};
 	var $form = $('div.form');
 	$form.find('div').hide();
@@ -17,13 +17,14 @@ Start.showForm = function () {
 		});
 	});
 	$form.find('[name=run-editor]').click(function () {
+		save();
 		moveTo({
 			type : 'editor',
 			w : $form.find('[name=w]'    ).val(),
 			h : $form.find('[name=h]'    ).val()
 		});
 	});
-	$form.find('select, input').change(save);
+	save();
 	var showType = function () {
 		if ($(this).val() == 'editor') {
 			$form.children(".editor-params").slideDown();
