@@ -10,11 +10,18 @@ Unit.prototype.rcCanvasRaysTexture = function (rays) {
 		ctx.fillStyle = "#000000";
 		ctx.fillRect(0, 0, width, height);
 		for (var i = 0; i < rays.length; i++) {
+			var last = rays[i].last;
 			var x = rays[i].dist;
 			var L = rays[i].length;
-			var texture = rays[i].last.diff.isStart  ? 'startWall' :
-						  rays[i].last.diff.isFinish ? 'finishWall' :
+			var texture = last.diff.isStart  ? 'startWall' :
+						  last.diff.isFinish ? 'finishWall' :
 										  'mainWall';
+			if (last.coord.x == 13 && last.coord.y == 13 && rays[i].wall == 'top') {
+				texture = 'hellWall';
+			}
+			if (last.coord.x == 2 && last.coord.y == 2 && !$_GET['Lab'] && rays[i].wall == 'bottom') {
+				texture = 'q1Wall';
+			}
 			var im = images[texture];
 			var ihw  = (height / L);
 			var top  = (height - ihw) / 2;
@@ -46,6 +53,8 @@ Unit.prototype.rcCanvasRaysInit = function (fn) {
 	} else {
 		unit.rcCanvasLines = {};
 		ImagePreloader({
+			'hellWall'   : 'img/wall-hell.png',
+			'q1Wall'     : 'img/wall-q1.png',
 			'mainWall'   : 'img/wall.png',
 			'startWall'  : 'img/wall-green.png',
 			'finishWall' : 'img/wall-red.png'

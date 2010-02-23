@@ -22,6 +22,7 @@ Unit.prototype.rcHtmlRaysTexture = function (rays) {
 		if (!strips[i]) {
 			break;
 		}
+		var last = rays[i].last;
 		var x = rays[i].dist;
 		var L = rays[i].length;
 		var stripHeight = height / L;
@@ -35,10 +36,17 @@ Unit.prototype.rcHtmlRaysTexture = function (rays) {
 			texX -= (stripHeight-1) * stripWidth;
 		}
 
-		var texture = rays[i].last.diff.isStart  ? 'startWall' :
-		              rays[i].last.diff.isFinish ? 'finishWall' :
+		var texture = last.diff.isStart  ? 'startWall' :
+		              last.diff.isFinish ? 'finishWall' :
 		                              'mainWall';
-		
+
+		if (last.coord.x == 13 && last.coord.y == 13 && rays[i].wall == 'top') {
+			texture = 'hellWall';
+		}
+		if (last.coord.x == 2 && last.coord.y == 2 && !$_GET['Lab'] && rays[i].wall == 'bottom') {
+			texture = 'q1Wall';
+		}
+
 		var img = strips[i].img;
 
 		ifChanged(img,    'top', stripTop.round() + 'px');
@@ -65,6 +73,8 @@ Unit.prototype.rcGetTextureSrc = function (name) {
 	if (!this.rcTexture) {
 		this.rcTexture = {};
 		var data = {
+			'hellWall'   : 'img/wall-hell.png',
+			'q1Wall'     : 'img/wall-q1.png',
 			'mainWall'   : 'img/wall.png',
 			'startWall'  : 'img/wall-green.png',
 			'finishWall' : 'img/wall-red.png'
