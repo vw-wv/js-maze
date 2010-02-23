@@ -40,7 +40,7 @@ Unit.prototype.rcHtmlRaysTexture = function (rays) {
 		              last.diff.isFinish ? 'finishWall' :
 		                              'mainWall';
 
-		if (last.coord.x == 13 && last.coord.y == 13 && rays[i].wall == 'right') {
+		if (last.coord.x == 13 && last.coord.y == 13 && rays[i].wall == 'left') {
 			texture = 'hellWall';
 		}
 		if (last.coord.x == 2 && last.coord.y == 2 && !$_GET['Lab'] && rays[i].wall == 'bottom') {
