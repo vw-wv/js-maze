@@ -34,7 +34,7 @@
 					<option value="720x360" >Среднее разрешение (720x360)</option>
 					<option value="1000x500" selected="selected" >Высокое разрешение (1000x500)</option>
 					<option value="1200x600">Очень высокое разрешение (1200x600)</option>
-					<option value="1600x800">Найвысшее разрешение (1600x800)</option>
+					<option value="1600x800">Наивысшее разрешение (1600x800)</option>
 				</select>
 				<select name="quality">
 					<option value="10">Просто жесть</option>
@@ -42,14 +42,16 @@
 					<option value="4" >Низкое качество</option>
 					<option value="3" >Среднее качество</option>
 					<option value="2" selected="selected">Высокое качество</option>
-					<option value="1" >Найвысшее качество</option>
+					<option value="1" >Наивысшее качество</option>
 				</select>
 				<label for="texture">
 					<input type="checkbox" name="texture" id="texture" checked="checked" /> Текстуры
 				</label>
+					<?php if ( !preg_match('/MSIE/i',$_SERVER['HTTP_USER_AGENT'])) : ?>
 				<label for="light">
 					<input type="checkbox" name="light" id="light" checked="checked" /> Объемный свет
 				</label>
+					<? endif; ?>
 				<input name="run-game" value="Шпилить!" class="submit" type="submit" />
 			</div>
 
