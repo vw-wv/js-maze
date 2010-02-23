@@ -16,7 +16,7 @@ Unit.prototype.rcCanvasRaysTexture = function (rays) {
 			var texture = last.diff.isStart  ? 'startWall' :
 						  last.diff.isFinish ? 'finishWall' :
 										  'mainWall';
-			if (last.coord.x == 13 && last.coord.y == 13 && rays[i].wall == 'top') {
+			if (last.coord.x == 13 && last.coord.y == 13 && rays[i].wall == 'right') {
 				texture = 'hellWall';
 			}
 			if (last.coord.x == 2 && last.coord.y == 2 && !$_GET['Lab'] && rays[i].wall == 'bottom') {
